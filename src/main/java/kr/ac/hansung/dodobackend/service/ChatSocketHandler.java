@@ -12,6 +12,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 @RequiredArgsConstructor
 @Component
@@ -39,6 +40,7 @@ public class ChatSocketHandler extends TextWebSocketHandler {
         System.out.println();
         String payload = message.getPayload();
         Chat chatMessage = objectMapper.readValue(payload, Chat.class);
+        chatMessage.setTime((int)(new Date()).getTime());
         sendMessageToAll(chatMessage);
     }
     private void sendMessageToAll(Chat message){
