@@ -2,12 +2,12 @@ package kr.ac.hansung.dodobackend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.validation.Valid;
 import kr.ac.hansung.dodobackend.model.User;
 import kr.ac.hansung.dodobackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -29,7 +29,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> AddUser(@Validated @RequestBody User user)
+    public ResponseEntity<?> AddUser(@Valid @RequestBody User user)
     {
         System.out.println("Entered user info : " + user);
         userService.AddUser(user);
