@@ -6,8 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
 import java.io.Serializable;
+import java.util.Collection;
 
 @Getter
 @Setter
@@ -37,4 +37,5 @@ public class User implements Serializable
 
     @NotEmpty(message = "The address must not be null")
     private String address;
+
 }
