@@ -12,7 +12,7 @@ public class UserService {
     @Autowired
     private UserDao userDao;
 
-    public User GetUserById(int id) {
+    public User GetUserById(String id) {
         User user = userDao.findById(id).orElse(null);
         return user;
     }
