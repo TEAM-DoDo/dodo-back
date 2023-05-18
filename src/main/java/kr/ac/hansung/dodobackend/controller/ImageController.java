@@ -49,6 +49,7 @@ public class ImageController {
     //이미지 이름을 받아 다운로드 하는 함수 향후 아이디를 받아 다운로드 하도록 만들 예정
     @GetMapping("/download/{dodoId}/{imageName}")
     public ResponseEntity<Resource> getImage(@PathVariable int dodoId,@PathVariable String imageName){
+        System.out.println("Image request from dodo id : " + dodoId + "/ image name : " + imageName);
         Path folderPath = checkAndCreatePath(imagePath+"/"+dodoId);
         if (folderPath==null){
             System.out.println("Failed to create path");
@@ -60,7 +61,9 @@ public class ImageController {
         try {
             header.add("Content-Type", Files.probeContentType(file.toPath()));
         } catch (IOException e) {
-
+            System.out.println("Can't add header");
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
         //이미지를 가져오는 알고리즘 작성
         return new ResponseEntity<>(result,header,HttpStatus.OK);

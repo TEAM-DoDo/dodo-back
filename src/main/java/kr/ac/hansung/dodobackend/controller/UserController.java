@@ -3,6 +3,7 @@ package kr.ac.hansung.dodobackend.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
+import kr.ac.hansung.dodobackend.jwt.JwtTokenProvider;
 import kr.ac.hansung.dodobackend.model.User;
 import kr.ac.hansung.dodobackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,8 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private UserService userService;
-
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public User GetUser(@PathVariable("id") int id)
@@ -41,7 +43,7 @@ public class UserController {
     //만약 유저가 없다면 회원가입으로 넘어가는 처리 필요
     @PostMapping("/check")
     public ResponseEntity<?> checkUser(@RequestBody String json){
-        System.out.println(json);
+        System.out.println(json);//향후 인증번호를 이곳에서 검증해서 체킹하는 방법도 가능할 듯 하다
         Map<String,Object> result;
         try{
             result = new ObjectMapper().readValue(json, HashMap.class);
@@ -54,7 +56,7 @@ public class UserController {
         if (u == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(jwtTokenProvider.createToken(),HttpStatus.OK);
     }
     //이후 유저의 호출을 받아서 회원가입 진행
 }
