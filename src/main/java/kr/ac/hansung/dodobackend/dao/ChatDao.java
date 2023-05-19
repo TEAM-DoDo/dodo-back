@@ -7,5 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @Transactional
-public interface ChatDao extends JpaRepository<Chat,Integer> {
+public interface ChatDao extends JpaRepository<Chat, Long> {
+
 }

@@ -1,41 +1,54 @@
 package kr.ac.hansung.dodobackend.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import java.io.Serializable;
-import java.util.Collection;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
-@Entity
 @Table(name = "user")
-public class User implements Serializable
-{
-    private static final long serialVersionUID = -567117648902464025L;
+@Entity
+public class User{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private int id;
-
-    @NotEmpty(message = "The phoneNumber must not be null")
-    private String phoneNumber;
-
-    @NotEmpty(message = "The nickname must not be null")
     private String nickname;
 
-    @NotEmpty(message = "The birth must not be null")
-    private String birth;
+    @Column(name = "birth")
+    private String dateOfBirth;
 
-    @NotEmpty(message = "The gender must not be null")
-    private String gender;
-
-    @NotEmpty(message = "The address must not be null")
+    @Column(name = "address")
     private String address;
 
+    @Column(name="gener")
+    private String gender;
+
+    @Column(name="level")
+    private String level;
+
+    @Column(name="badge")
+    private String badge;
+
+    @Column(name="schedule")
+    private String schedule;
+
+    @Column(name="profileImagePath")
+    private String profileImagePath;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Notice> notices = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<InterestOfUser> interestOfUserList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<CommunityOfUser> communityOfUserList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<ScheduleOfUser> scheduleOfUserList = new ArrayList<>();
 }

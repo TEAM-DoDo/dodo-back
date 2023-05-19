@@ -23,7 +23,7 @@ public class UserController {
     private JwtTokenProvider jwtTokenProvider;
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public User GetUser(@PathVariable("id") int id)
+    public User GetUser(@PathVariable("id") String id)
     {
         System.out.println("find id : " + id);
         User user = userService.GetUserById(id);
