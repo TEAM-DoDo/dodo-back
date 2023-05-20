@@ -1,6 +1,9 @@
 package kr.ac.hansung.dodobackend.controller;
 
-import kr.ac.hansung.dodobackend.model.Do;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.ac.hansung.dodobackend.model.Community;
+import kr.ac.hansung.dodobackend.model.Schedule;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -14,7 +17,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/do")
 public class DoController {
-    private Map<Integer, Do> doDummy = new HashMap<>();
+    private Map<Integer, Community> doDummy = new HashMap<>();
     @GetMapping("/list")
     public ResponseEntity<Map<String,Object>> getDoIDList(){
         Map<String,Object> result = new HashMap<>();
@@ -24,14 +27,54 @@ public class DoController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
     @PostMapping("/create")
-    public ResponseEntity<?> createDO(@Validated @RequestBody Do doInfo){
+    public ResponseEntity<?> createDO(@Validated @RequestBody String json){
+        Map<String,Object> result;
+        try{
+            result = new ObjectMapper().readValue(json, HashMap.class);
+        } catch (JsonProcessingException e){
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        //받아온 데이터를 새로운 커뮤니티로 생성
+        Community doInfo = new Community();
+        doInfo.setDoName(result.get("doName").toString());
+        doInfo.setPlace(result.get("place").toString());
+        doInfo.setDescription(result.get("description").toString());
+        doInfo.setImage(result.get("image").toString());
         //현재는 더미에 데이터를 저장하도록 되어있음
         doDummy.put(doDummy.size(),doInfo);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/{do_id}")
-    public ResponseEntity<Do> getDo(@PathVariable("do_id") int doId){
-        Do data = doDummy.get(doId);
+    public ResponseEntity<Community> getDo(@PathVariable("do_id") int doId){
+        Community data = doDummy.get(doId);
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
+    //가장 최근의 스케줄을 사용자에게 전송해주는 코드
+    @GetMapping("/{do_id}/schedule")
+    public ResponseEntity<Schedule> getDoSchedule(@PathVariable("do_id") int doId){
+        Community doData = doDummy.get(doId);
+        if (doData == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        var schedules = doData.getSchedules();
+        if (schedules.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        var schedule = schedules.get(schedules.size()-1);
+        return new ResponseEntity<>(schedule,HttpStatus.OK);
+    }
+    @PostMapping("/{do_id}/schedule/create")
+    public ResponseEntity<?> createDoSchedule(@PathVariable("do_id") int doId,@Validated @RequestBody String json){
+        Map<String,Object> result;
+        try{
+            result = new ObjectMapper().readValue(json, HashMap.class);
+        } catch (JsonProcessingException e){
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    //@PostMapping("/")
 }

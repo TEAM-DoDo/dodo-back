@@ -2,10 +2,14 @@ package kr.ac.hansung.dodobackend.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
 @Data
 @Table(name="community")
 @Entity
@@ -22,6 +26,7 @@ public class Community {
     @JoinColumn(name = "category")
     private Category category;
 
+    private String image;
     //사용자 has 모임
     @OneToMany(mappedBy = "community")
     private List<CommunityOfUser> communityOfUserList = new ArrayList<>();

@@ -13,14 +13,14 @@ import org.springframework.web.filter.GenericFilterBean;
 import java.io.IOException;
 //jwt 필터 현재 디버깅을 위해 비활성화
 @RequiredArgsConstructor
-@WebFilter(
-        urlPatterns = {
-                //"/api/user/*",
-                "/api/image/*",
-                "/api/do/*"
-        }
-)
-//@Component
+//@WebFilter(
+//        urlPatterns = {
+//                //"/api/user/*",
+//                "/api/image/*",
+//                "/api/do/*"
+//        }
+//)
+////@Component
 @Order(1)
 public class JwtAuthenticationFilter implements Filter {
     private final JwtTokenProvider jwtTokenProvider;
@@ -30,11 +30,13 @@ public class JwtAuthenticationFilter implements Filter {
 
         // 1. token이 존재하는지 확인
         if (token == null) {
-            throw new IOException("No token exist.");
+            System.out.println("Token not exist.");
+            return;
         }
         // 2. token이 유효한지 확인 아닐경우 throw
         if (!jwtTokenProvider.validateToken(token)){
-            throw new IOException("Not a valid token.");
+            System.out.println("Not a valid token : " + token);
+            return;
         }
         //System.out.println("Valid Token inputted : " + token);
         chain.doFilter(request, response);
@@ -46,7 +48,12 @@ public class JwtAuthenticationFilter implements Filter {
         String bearerToken = request.getHeader("Authorization");
         //System.out.println("token : " +bearerToken);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
-            return bearerToken.substring(7);
+            try {
+                return bearerToken.substring(7);
+            } catch (StringIndexOutOfBoundsException e){
+                return null;
+            }
+
         }
         return null;
     }

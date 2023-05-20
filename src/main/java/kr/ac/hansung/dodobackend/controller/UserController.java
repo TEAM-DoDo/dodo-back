@@ -44,18 +44,18 @@ public class UserController {
     @PostMapping("/check")
     public ResponseEntity<?> checkUser(@RequestBody String json){
         System.out.println(json);//향후 인증번호를 이곳에서 검증해서 체킹하는 방법도 가능할 듯 하다
-        Map<String,Object> result;
-        try{
-            result = new ObjectMapper().readValue(json, HashMap.class);
-        } catch (JsonProcessingException e){
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-        User u = userService.GetUserByPhone(result.get("phoneNumber").toString());
-        System.out.println(json);
-        if (u == null){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+//        Map<String,Object> result;
+//        try{
+//            result = new ObjectMapper().readValue(json, HashMap.class);
+//        } catch (JsonProcessingException e){
+//            e.printStackTrace();
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        }
+//        var d = result.get("phoneNumber").toString();
+//        System.out.println(json);
+//        if (d == null){
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//        }
         return new ResponseEntity<>(jwtTokenProvider.createToken(),HttpStatus.OK);
     }
     //이후 유저의 호출을 받아서 회원가입 진행

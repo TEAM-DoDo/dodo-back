@@ -16,13 +16,13 @@ public class UserService {
         User user = userDao.findById(id).orElse(null);
         return user;
     }
-    //테스트를 위해 작성한 함수
-    public User GetUserByNameAndPhone(String nickName,String phoneNumber){
-        return userDao.findUserByNicknameAndPhoneNumber(nickName,phoneNumber);
-    }
-    public User GetUserByPhone(String phoneNumber){
-        return userDao.findUserByPhoneNumber(phoneNumber);
-    }
+//    //테스트를 위해 작성한 함수
+//    public User GetUserByNameAndPhone(String nickName,String phoneNumber){
+//        return userDao.findUserByNicknameAndPhoneNumber(nickName,phoneNumber);
+//    }
+//    public User GetUserByPhone(String phoneNumber){
+//        return userDao.findUserByPhoneNumber(phoneNumber);
+//    }
     public void AddUser(User user)
     {
         userDao.save(user);
