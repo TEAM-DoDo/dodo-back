@@ -1,7 +1,6 @@
-package kr.ac.hansung.dodobackend.model;
+package kr.ac.hansung.dodobackend.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 
 import java.util.ArrayList;

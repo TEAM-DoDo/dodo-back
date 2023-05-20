@@ -1,4 +1,4 @@
-package kr.ac.hansung.dodobackend.model;
+package kr.ac.hansung.dodobackend.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

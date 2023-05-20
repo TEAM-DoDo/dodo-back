@@ -1,25 +1,11 @@
 package kr.ac.hansung.dodobackend.service;
 
-import kr.ac.hansung.dodobackend.dao.UserDao;
-import kr.ac.hansung.dodobackend.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import kr.ac.hansung.dodobackend.dto.SignUpDTO;
+import kr.ac.hansung.dodobackend.dto.SignUpResponseDTO;
+import kr.ac.hansung.dodobackend.dto.UserResponseDTO;
 
-import java.util.Optional;
+public interface UserService {
+    SignUpResponseDTO SignUp(SignUpDTO signUpDTO); //유저 신규 생성
 
-@Service
-public class UserService {
-    @Autowired
-    private UserDao userDao;
-
-    public User GetUserById(String id) {
-        User user = userDao.findById(id).orElse(null);
-        return user;
-    }
-
-    public void AddUser(User user)
-    {
-        userDao.save(user);
-    }
-
+    UserResponseDTO GetUserByNickname(String nickname); //닉네임으로 유저 조회
 }
