@@ -1,14 +1,17 @@
 package kr.ac.hansung.dodobackend.service;
 
 import kr.ac.hansung.dodobackend.dto.*;
-import kr.ac.hansung.dodobackend.entity.User;
+import kr.ac.hansung.dodobackend.entity.*;
 import kr.ac.hansung.dodobackend.exception.UserNotFoundException;
+import kr.ac.hansung.dodobackend.repository.CommunityOfUserRepository;
+import kr.ac.hansung.dodobackend.repository.ScheduleOfUserRepository;
 import kr.ac.hansung.dodobackend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +20,8 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService{ //유저 서비스 레이어
     private final UserRepository userRepository; //생성자 주입
     private final ImageService imageService; //생성자 주입
+    private final CommunityOfUserRepository communityOfUserRepository; //생성자 주입
+    private final ScheduleOfUserRepository scheduleOfUserRepository; //생성자 주입
 
     @Override
     public UserResponseDTO GetUserById(Long id) {
@@ -132,5 +137,57 @@ public class UserServiceImpl implements UserService{ //유저 서비스 레이�
         //반환
         UserResponseDTO userResponseDTO = UserResponseDTO.builder().user(currentUser).build();
         return userResponseDTO;
+    }
+
+    @Override
+    public CommunityListOfUserDTO GetCommunityListOfUserById(Long id) {
+        //내 정보 조회
+        Optional<User> user = userRepository.findById(id);
+        if(user.isPresent() == false)
+        {
+            System.out.println("isPresent()로 예외 처리 감지");
+            String errorMessage = "해당 유저를 찾을 수 없습니다.";
+            throw UserNotFoundException.builder().code(HttpStatus.NOT_FOUND.value()).message(errorMessage).build();
+            //throw 시 메서드의 실행이 중지되어, 아래 코드는 실행되지 않음
+        }
+
+        //내가 속한 커뮤니티들 조회
+        List<CommunityOfUser> communityOfUserList = communityOfUserRepository.findByUser(user.get());
+        List<Community> communityList = new ArrayList<>();
+        for(CommunityOfUser communityOfUser : communityOfUserList)
+        {
+            communityList.add(communityOfUser.getCommunity());
+        }
+
+        //반환
+        CommunityListOfUserDTO communityListOfUserDTO = CommunityListOfUserDTO.builder().user(user.get())
+                .communityList(communityList).build();
+        return communityListOfUserDTO;
+    }
+
+    @Override
+    public ScheduleListOfUserDTO GetScheduleListOfUserById(Long id) {
+        //내 정보 조회
+        Optional<User> user = userRepository.findById(id);
+        if(user.isPresent() == false)
+        {
+            System.out.println("isPresent()로 예외 처리 감지");
+            String errorMessage = "해당 유저를 찾을 수 없습니다.";
+            throw UserNotFoundException.builder().code(HttpStatus.NOT_FOUND.value()).message(errorMessage).build();
+            //throw 시 메서드의 실행이 중지되어, 아래 코드는 실행되지 않음
+        }
+
+        //내가 속한 일정들 조회
+        List<ScheduleOfUser> scheduleOfUserList = scheduleOfUserRepository.findByUser(user.get());
+        List<Schedule> scheduleList = new ArrayList<>();
+        for(ScheduleOfUser scheduleOfUser : scheduleOfUserList)
+        {
+            scheduleList.add(scheduleOfUser.getSchedule());
+        }
+
+        //반환
+        ScheduleListOfUserDTO scheduleListOfUserDTO = ScheduleListOfUserDTO.builder().user(user.get())
+                .scheduleList(scheduleList).build();
+        return scheduleListOfUserDTO ;
     }
 }
