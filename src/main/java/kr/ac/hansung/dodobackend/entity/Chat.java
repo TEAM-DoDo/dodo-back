@@ -35,4 +35,8 @@ public class Chat {
         this.content = content;
         this.profileImagePath = profileImagePath;
     }
+
+    public void setTime(int time) {
+        this.reportingDate = Integer.toString(time);
+    }
 }

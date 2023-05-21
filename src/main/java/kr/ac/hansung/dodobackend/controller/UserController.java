@@ -40,7 +40,7 @@ public class UserController {
     }
 
     //닉네임으로 유저 조회
-    @GetMapping
+    @GetMapping("/nickname")
     public ResponseEntity<UserResponseDTO> GetUserByNickname(@RequestParam("nickname") String nickname)
     {
         //조회
@@ -91,6 +91,30 @@ public class UserController {
 
         //반환
         return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
+    }
+
+    //사용자 has 모임
+    @GetMapping("/communityList")
+    public ResponseEntity<CommunityListOfUserDTO> GetMyCommunityList(Long id)
+    {
+        //조회
+        System.out.println("조회하고 싶은 유저의 아이디 : " + id);
+        CommunityListOfUserDTO communityListOfUserDTO = userServiceImpl.GetCommunityListOfUserById(id);
+
+        //반환
+        return new ResponseEntity<>(communityListOfUserDTO, HttpStatus.OK);
+    }
+
+    //사용자 has 일정
+    @GetMapping("/scheduleList")
+    public ResponseEntity<ScheduleListOfUserDTO> GetMyScheduleList(Long id)
+    {
+        //조회
+        System.out.println("조회하고 싶은 유저의 아이디 : " + id);
+        ScheduleListOfUserDTO scheduleListOfUserDTO = userServiceImpl.GetScheduleListOfUserById(id);
+
+        //반환
+        return new ResponseEntity<>(scheduleListOfUserDTO, HttpStatus.OK);
     }
 
     //Check user 함수가 필요, 만약 check user에서 유저 존재 여부를 확인하면 jwt 토큰을 전송해줘야함

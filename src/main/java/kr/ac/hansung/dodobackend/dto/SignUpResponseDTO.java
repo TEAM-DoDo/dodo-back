@@ -13,6 +13,4 @@ public class SignUpResponseDTO { //회원 가입 정상 처리 후 신규 가입
     private final String gender; //성별
     private final String category; //관심사 카테고리
     private final String statusForTest; //값이 잘 들어왔는지 확인하는 용도. 나중에 삭제할 것.
-
-    //카테고리 추후 추가할 것.
 }

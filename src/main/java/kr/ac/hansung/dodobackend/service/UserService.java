@@ -9,4 +9,6 @@ public interface UserService {
     UserResponseDTO GetUserByPhoneNumber(String phoneNumber); //핸드폰번호로 유저 조회
     UserResponseDTO SignIn(SignInDTO signInDTO); //로그인
     UserResponseDTO changeProfileImage(ProfileImageDTO profileImageDTO); //프로필 이미지 업데이트
+    CommunityListOfUserDTO GetCommunityListOfUserById(Long id); //유저가 참가한 커뮤니티 리스트 조회
+    ScheduleListOfUserDTO GetScheduleListOfUserById(Long id); //유저가 참가한 일정 리스트 조회
 }
