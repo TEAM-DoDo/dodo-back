@@ -4,11 +4,19 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.ac.hansung.dodobackend.model.Community;
 import kr.ac.hansung.dodobackend.model.Schedule;
+import kr.ac.hansung.dodobackend.service.ImageService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +26,8 @@ import java.util.Map;
 @RequestMapping("/api/do")
 public class DoController {
     private Map<Integer, Community> doDummy = new HashMap<>();
+    @Autowired
+    ImageService imageService;
     @GetMapping("/list")
     public ResponseEntity<Map<String,Object>> getDoIDList(){
         Map<String,Object> result = new HashMap<>();
@@ -40,7 +50,7 @@ public class DoController {
         doInfo.setDoName(result.get("doName").toString());
         doInfo.setPlace(result.get("place").toString());
         doInfo.setDescription(result.get("description").toString());
-        doInfo.setImage(result.get("image").toString());
+//        doInfo.setImage(result.get("image").toString());
         //현재는 더미에 데이터를 저장하도록 되어있음
         doDummy.put(doDummy.size(),doInfo);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -65,16 +75,43 @@ public class DoController {
         return new ResponseEntity<>(schedule,HttpStatus.OK);
     }
     @PostMapping("/{do_id}/schedule/create")
-    public ResponseEntity<?> createDoSchedule(@PathVariable("do_id") int doId,@Validated @RequestBody String json){
-        Map<String,Object> result;
-        try{
+    public ResponseEntity<?> createDoSchedule(@PathVariable("do_id") int doId,@Validated @RequestBody String json) {
+        Map<String, Object> result;
+        try {
             result = new ObjectMapper().readValue(json, HashMap.class);
-        } catch (JsonProcessingException e){
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    //@PostMapping("/")
+    @PostMapping("/{do_id}/title-image")
+    public ResponseEntity<Resource> uploadTitleImage(@PathVariable("do_id") int doId, List<MultipartFile> files){
+        if (files.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if(!imageService.putFile("/title/",files.get(0),Integer.toString(doId))){
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    //타이틀 이미지 사진
+    @GetMapping("/{do_id}/title-image")
+    public ResponseEntity<Resource> uploadTitleImage(@PathVariable("do_id") int doId){
+        System.out.println("Request do title image : " + doId);
+        var file = imageService.getFile("/title/",Integer.toString(doId)+ ".jpeg");
+        if (file == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        FileSystemResource result = new FileSystemResource(file);
+        HttpHeaders header = new HttpHeaders();
+        try {
+            header.add("Content-Type", Files.probeContentType(file.toPath()));
+        } catch (IOException e) {
+            System.out.println("Can't add header");
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+        //이미지를 가져오는 알고리즘 작성
+        return new ResponseEntity<>(result,header,HttpStatus.OK);
+    }
 }

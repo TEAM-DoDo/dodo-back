@@ -16,8 +16,33 @@ import java.util.*;
 @Service
 public class ImageService {
     private final String imagePath = "/images/";
+    public boolean putFile(String storePath,MultipartFile file,String name){
+        if (file == null) return false;
+        if (file.isEmpty()) return false;
+        //do 가 존재하는지 확인하는 무결성 코드 필요
+        Path folderPath = CreatePath(imagePath+storePath);
+        if (folderPath==null) return false;
+
+        //향후 데이터 베이스와 저장된 이미지를 연동하는 코드가 필요함
+        String storeName = file.getOriginalFilename();
+        if (name != null){
+            String[] names = storeName.split("\\.");
+            storeName = name + "." + names[1];
+        }
+        Path path = Paths.get(folderPath+ "/" +storeName).toAbsolutePath();
+        try{
+            //System.out.println(path);
+            file.transferTo(path.toFile());
+        } catch (IOException e){
+            e.printStackTrace();
+            System.out.println("[Ignored]" + path);
+            return false;
+        }
+        System.out.println("[Saved]" + path);
+        return true;
+    }
     //호출 전에 두 존재 여부를 확인했다고 가정한 뒤 작성되는 코드
-    public boolean putFiles(int id,List<MultipartFile> files) throws IOException{
+    public boolean putFiles(String id,List<MultipartFile> files) throws IOException{
         if (files.size() == 0){
             return true;
         }

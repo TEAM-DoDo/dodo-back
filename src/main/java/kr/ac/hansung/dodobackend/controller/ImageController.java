@@ -65,7 +65,7 @@ public class ImageController {
     {
         boolean isFileUploaded = false;
         try {
-            isFileUploaded = imageService.putFiles(dodoId,files);
+            isFileUploaded = imageService.putFiles(Integer.toString(dodoId),files);
         }catch (IOException e){
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INSUFFICIENT_STORAGE);
@@ -75,4 +75,5 @@ public class ImageController {
         }
         return new ResponseEntity<>("{}", HttpStatus.OK);
     }
+
 }

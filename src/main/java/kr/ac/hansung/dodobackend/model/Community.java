@@ -26,7 +26,6 @@ public class Community {
     @JoinColumn(name = "category")
     private Category category;
 
-    private String image;
     //사용자 has 모임
     @OneToMany(mappedBy = "community")
     private List<CommunityOfUser> communityOfUserList = new ArrayList<>();
