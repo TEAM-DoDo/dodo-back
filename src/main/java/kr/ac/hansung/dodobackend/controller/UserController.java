@@ -20,16 +20,28 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController //Rest api를 위한 어노테이션. @Controller + @ResponseBody
-@RequestMapping(value="/api/users") // uri는 명사, 복수, 소문자, 밑줄(_) 사용 지향.
+@RequestMapping(value="/api/users") // 컨트롤러 기본 uri 지정. uri는 명사, 복수, 소문자, 하이픈(-) 사용 지향.
 @RequiredArgsConstructor //생성자 주입 지향할 것. @NotNull이 붙은 필드와 final 필드에 대해 의존성 주입
 public class UserController {
     //의존성 주입. 생성자가 하나이므로 @Autowired 생략가능
     private final JwtTokenProvider jwtTokenProvider; //생성자 주입
     private final UserServiceImpl userServiceImpl; //생성자 주입
-    
+
+    //아이디로 유저 조회
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponseDTO> GetUserByNickname(@PathVariable("id") Long id)
+    {
+        //조회
+        System.out.println("조회하고 싶은 유저의 아이디 : " + id);
+        UserResponseDTO userResponseDTO = userServiceImpl.GetUserById(id);
+
+        //반환
+        return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
+    }
+
     //닉네임으로 유저 조회
-    @GetMapping("/{nickname}")
-    public ResponseEntity<UserResponseDTO> GetUserByNickname(@PathVariable("nickname") String nickname)
+    @GetMapping
+    public ResponseEntity<UserResponseDTO> GetUserByNickname(@RequestParam("nickname") String nickname)
     {
         //조회
         System.out.println("조회하고 싶은 유저의 닉네임 : " + nickname);
