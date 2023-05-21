@@ -1,21 +1,22 @@
 package kr.ac.hansung.dodobackend.service;
 
-import kr.ac.hansung.dodobackend.dto.SignUpDTO;
-import kr.ac.hansung.dodobackend.dto.SignUpResponseDTO;
-import kr.ac.hansung.dodobackend.dto.UserResponseDTO;
+import kr.ac.hansung.dodobackend.dto.*;
 import kr.ac.hansung.dodobackend.entity.User;
 import kr.ac.hansung.dodobackend.exception.UserNotFoundException;
 import kr.ac.hansung.dodobackend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor //생성자 주입
 public class UserServiceImpl implements UserService{ //유저 서비스 레이어
     private final UserRepository userRepository; //생성자 주입
+    private final ImageService imageService; //생성자 주입
 
     @Override
     public UserResponseDTO GetUserById(Long id) {
@@ -58,9 +59,10 @@ public class UserServiceImpl implements UserService{ //유저 서비스 레이�
     @Override
     public SignUpResponseDTO SignUp(SignUpDTO signUpDTO) {
         //DTO를 Entity로 변환
-        User newUser = User.builder().phoneNumber(signUpDTO.getPhoneNumber()).nickname(signUpDTO.getNickname()).dateOfBirth(signUpDTO.getDateOfBirth())
-                .address(signUpDTO.getAddress()).gender(signUpDTO.getGender())
-                .level(1).badge("몸소 행차하신분").schedule("일정 없음").profileImagePath("파이어스토어 주소").build();
+        User newUser = User.builder().phoneNumber(signUpDTO.getPhoneNumber()).nickname(signUpDTO.getNickname())
+                .dateOfBirth(signUpDTO.getDateOfBirth()).address(signUpDTO.getAddress())
+                .gender(signUpDTO.getGender()).category(signUpDTO.getCategory()).level(1)
+                .profileImagePath("").build();
 
         //Entity 저장
         userRepository.save(newUser);
@@ -70,7 +72,65 @@ public class UserServiceImpl implements UserService{ //유저 서비스 레이�
 
         //반환
         SignUpResponseDTO signUpResponseDTO = SignUpResponseDTO.builder().phoneNumber(user.getPhoneNumber()).nickname(user.getNickname())
-                .dateOfBirth(user.getDateOfBirth()).address(user.getAddress()).gender(user.getGender()).statusForTest("새로운 유저 가입 완료!").build();
+                .dateOfBirth(user.getDateOfBirth()).address(user.getAddress()).gender(user.getGender())
+                .category(user.getCategory()).statusForTest("새로운 유저 가입 완료!").build();
         return signUpResponseDTO;
+    }
+
+    @Override
+    public UserResponseDTO SignIn(SignInDTO signInDTO) {
+        //조회
+        String phoneNumber = signInDTO.getPhoneNumber();
+        UserResponseDTO userResponseDTO = GetUserByPhoneNumber(phoneNumber);
+        
+        //반환
+        return userResponseDTO;
+    }
+
+    @Override
+    public UserResponseDTO GetUserByPhoneNumber(String phoneNumber) {
+        //조회
+        User user = userRepository.findByPhoneNumber(phoneNumber);
+
+        //만약 아이디에 해당하는 유저가 없다면 에러처리
+        if(user == null)
+        {
+            System.out.println("핸드폰번호 조회 예외 처리 감지");
+            String errorMessage = "해당 유저를 찾을 수 없습니다.";
+            throw UserNotFoundException.builder().code(HttpStatus.NOT_FOUND.value()).message(errorMessage).build();
+            //throw 시 메서드의 실행이 중지되어, 아래 코드는 실행되지 않음
+        }
+
+        //반환
+        UserResponseDTO userResponseDTO = UserResponseDTO.builder().user(user).build();
+        return userResponseDTO;
+    }
+
+    @Override
+    public UserResponseDTO changeProfileImage(ProfileImageDTO profileImageDTO) {
+        //유저 조회
+        Optional<User> user = userRepository.findById(profileImageDTO.getId());
+        if(user.isPresent() == false)
+        {
+            System.out.println("isPresent()로 예외 처리 감지");
+            String errorMessage = "해당 유저를 찾을 수 없습니다.";
+            throw UserNotFoundException.builder().code(HttpStatus.NOT_FOUND.value()).message(errorMessage).build();
+            //throw 시 메서드의 실행이 중지되어, 아래 코드는 실행되지 않음
+        }
+
+        //이미지 저장
+        String id = profileImageDTO.getId().toString();
+        List<MultipartFile> files = profileImageDTO.getFiles();
+        String imageSaveFolderName = "/users/";
+        String savedProfileImagePath = imageService.putFile(imageSaveFolderName, files.get(0), id);
+
+        //유저 프로필이미지 경로 업데이트
+        User currentUser = user.get();
+        currentUser.UpdateProfileImagePath(savedProfileImagePath);
+        userRepository.save(currentUser);
+
+        //반환
+        UserResponseDTO userResponseDTO = UserResponseDTO.builder().user(currentUser).build();
+        return userResponseDTO;
     }
 }

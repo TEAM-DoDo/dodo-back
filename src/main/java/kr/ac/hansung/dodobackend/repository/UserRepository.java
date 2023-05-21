@@ -8,5 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public interface UserRepository extends JpaRepository<User, Long> {
-    User findByNickname(String nickname);
+    User findByNickname(String nickname); //닉네임으로 유저 조회
+    User findByPhoneNumber(String phoneNumber); //핸드폰번호로 유저 조회
 }

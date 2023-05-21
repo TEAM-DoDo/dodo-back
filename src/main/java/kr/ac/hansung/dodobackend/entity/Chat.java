@@ -1,26 +1,38 @@
 package kr.ac.hansung.dodobackend.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
-@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString(exclude = "community")
 @Table(name = "chat")
 @Entity
 public class Chat {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(name = "category")
-    private int category;
-    @Column(name = "username")
-    private String username;
-    @Column(name = "time")
-    private int time;
-    @Column(name = "content")
-    private String content;
+    @Column(name = "id")
+    private Long id; //기본키
 
+    @Column(name = "nickname")
+    private String nickname; //작성자
+    @Column(name = "time")
+    private String reportingDate; //작성일
+    @Column(name = "content")
+    private String content; //내용
+    @Column(name="profileImagePath")
+    private String profileImagePath; //작성자의 프로필 이미지 경로
+
+    //소속된 커뮤니티의 기본키를 외래키로 가짐
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "do_name")
+    @JoinColumn(name = "community_id")
     private Community community;
+
+    @Builder
+    private Chat(String nickname, String reportingDate, String content, String profileImagePath)
+    {
+        this.nickname = nickname;
+        this.reportingDate = reportingDate;
+        this.content = content;
+        this.profileImagePath = profileImagePath;
+    }
 }

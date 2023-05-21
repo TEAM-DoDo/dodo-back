@@ -46,10 +46,10 @@ public class DoController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         //받아온 데이터를 새로운 커뮤니티로 생성
-        Community doInfo = new Community();
-        doInfo.setDoName(result.get("doName").toString());
-        doInfo.setPlace(result.get("place").toString());
-        doInfo.setDescription(result.get("description").toString());
+        String name = result.get("doName").toString();
+        String place = result.get("place").toString();
+        String description = result.get("description").toString();
+        Community doInfo = Community.builder().name(name).description(description).place(place).bannerImagepath("").build();
 //        doInfo.setImage(result.get("image").toString());
         //현재는 더미에 데이터를 저장하도록 되어있음
         doDummy.put(doDummy.size(),doInfo);
@@ -91,7 +91,7 @@ public class DoController {
         if (files.isEmpty()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        if(!imageService.putFile("/title/",files.get(0),Integer.toString(doId))){
+        if(imageService.putFile("/title/",files.get(0),Integer.toString(doId)) == null){
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
         return new ResponseEntity<>(HttpStatus.OK);

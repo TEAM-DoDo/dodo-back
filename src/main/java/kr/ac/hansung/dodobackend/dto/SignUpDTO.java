@@ -20,6 +20,6 @@ public class SignUpDTO { //클라이언트로부터 날라온 회원 가입 정�
     private String address; //주소
     @NotBlank(message = "Gender is blank")
     private String gender; //성별
-
-    //카테고리 추후 추가할 것.
+    @NotBlank(message = "Category is blank")
+    private String category; //관심사 카테고리 최대 3개. 쉼표로 이은 하나의 문자열로 저장
 }
