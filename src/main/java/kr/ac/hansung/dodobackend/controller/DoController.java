@@ -2,8 +2,8 @@ package kr.ac.hansung.dodobackend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.ac.hansung.dodobackend.model.Community;
-import kr.ac.hansung.dodobackend.model.Schedule;
+import kr.ac.hansung.dodobackend.entity.Community;
+import kr.ac.hansung.dodobackend.entity.Schedule;
 import kr.ac.hansung.dodobackend.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
