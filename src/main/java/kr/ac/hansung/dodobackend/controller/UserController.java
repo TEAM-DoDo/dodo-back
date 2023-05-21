@@ -19,20 +19,22 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestController
-@RequestMapping(value="/api/user")
+@RestController //Rest api를 위한 어노테이션. @Controller + @ResponseBody
+@RequestMapping(value="/api/users") // uri는 명사, 복수, 소문자, 밑줄(_) 사용 지향.
 @RequiredArgsConstructor //생성자 주입 지향할 것. @NotNull이 붙은 필드와 final 필드에 대해 의존성 주입
 public class UserController {
-    private final JwtTokenProvider jwtTokenProvider;
-    private final UserServiceImpl userServiceImpl; //생성자가 하나이므로 @Autowired 생략가능
+    //의존성 주입. 생성자가 하나이므로 @Autowired 생략가능
+    private final JwtTokenProvider jwtTokenProvider; //생성자 주입
+    private final UserServiceImpl userServiceImpl; //생성자 주입
     
     //닉네임으로 유저 조회
     @GetMapping("/{nickname}")
-    public ResponseEntity<UserResponseDTO> GetUser(@PathVariable("nickname") String nickname)
+    public ResponseEntity<UserResponseDTO> GetUserByNickname(@PathVariable("nickname") String nickname)
     {
         //조회
         System.out.println("조회하고 싶은 유저의 닉네임 : " + nickname);
         UserResponseDTO userResponseDTO = userServiceImpl.GetUserByNickname(nickname);
+
         //반환
         return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
     }
@@ -50,6 +52,7 @@ public class UserController {
         //반환
         return new ResponseEntity<>(signUpResponseDTO, HttpStatus.CREATED);
     }
+
     //Check user 함수가 필요, 만약 check user에서 유저 존재 여부를 확인하면 jwt 토큰을 전송해줘야함
     //로그인 성공시 return은 HttpStatus.OK 및 JWT 토큰 이 경우 바로 홈화면으로 넘어감
     //없을 경우 return은 HttpStatus.BAD_REQUEST이 경우 프론트에서 회원가입으로 넘어감
