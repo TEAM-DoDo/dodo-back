@@ -4,6 +4,7 @@ import kr.ac.hansung.dodobackend.dto.*;
 import kr.ac.hansung.dodobackend.entity.*;
 import kr.ac.hansung.dodobackend.exception.UserNotFoundException;
 import kr.ac.hansung.dodobackend.repository.CommunityOfUserRepository;
+import kr.ac.hansung.dodobackend.repository.CommunityRepository;
 import kr.ac.hansung.dodobackend.repository.ScheduleOfUserRepository;
 import kr.ac.hansung.dodobackend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ public class UserServiceImpl implements UserService{ //유저 서비스 레이�
     private final ImageService imageService; //생성자 주입
     private final CommunityOfUserRepository communityOfUserRepository; //생성자 주입
     private final ScheduleOfUserRepository scheduleOfUserRepository; //생성자 주입
-
+    private final CommunityRepository communityRepository; //생성자 주입
     @Override
     public UserResponseDTO GetUserById(Long id) {
         //아이디로 조회
@@ -189,5 +190,16 @@ public class UserServiceImpl implements UserService{ //유저 서비스 레이�
         ScheduleListOfUserDTO scheduleListOfUserDTO = ScheduleListOfUserDTO.builder().user(user.get())
                 .scheduleList(scheduleList).build();
         return scheduleListOfUserDTO ;
+    }
+
+    public void CreateCommunityOfUser(Long userId, Long communityId)
+    {
+        //조회
+        Optional<User> user = userRepository.findById(userId);
+        Optional<Community> community = communityRepository.findById(communityId);
+
+        //저장
+        CommunityOfUser newCommunityOfUser = CommunityOfUser.builder().user(user.get()).community(community.get())
+                .isHostTrue(false).isLikeTrue(false).build();
     }
 }
