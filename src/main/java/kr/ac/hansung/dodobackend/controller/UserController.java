@@ -3,12 +3,11 @@ package kr.ac.hansung.dodobackend.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
+import kr.ac.hansung.dodobackend.dto.*;
 import kr.ac.hansung.dodobackend.jwt.JwtTokenProvider;
+import kr.ac.hansung.dodobackend.service.ImageService;
 import kr.ac.hansung.dodobackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import kr.ac.hansung.dodobackend.dto.SignUpDTO;
-import kr.ac.hansung.dodobackend.dto.SignUpResponseDTO;
-import kr.ac.hansung.dodobackend.dto.UserResponseDTO;
 import kr.ac.hansung.dodobackend.entity.User;
 import kr.ac.hansung.dodobackend.service.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +25,7 @@ public class UserController {
     //의존성 주입. 생성자가 하나이므로 @Autowired 생략가능
     private final JwtTokenProvider jwtTokenProvider; //생성자 주입
     private final UserServiceImpl userServiceImpl; //생성자 주입
+    private final ImageService imageService; //생성자 주입
 
     //아이디로 유저 조회
     @GetMapping("/{id}")
@@ -63,6 +63,34 @@ public class UserController {
         
         //반환
         return new ResponseEntity<>(signUpResponseDTO, HttpStatus.CREATED);
+    }
+
+    //로그인
+    @GetMapping
+    public ResponseEntity<UserResponseDTO> SignIn(@Valid @RequestBody SignInDTO signInDTO)
+    {
+        //DTO 출력
+        System.out.println("클라이언트로부터 받은 로그인 정보 : " + signInDTO);
+
+        //서비스 레이어에게 DTO전달
+        UserResponseDTO userResponseDTO = userServiceImpl.SignIn(signInDTO);
+        
+        //반환
+        return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
+    }
+
+    //프로필 이미지 업데이트
+    @PutMapping
+    public ResponseEntity<UserResponseDTO> ChangeProfileImage(ProfileImageDTO profileImageDTO)
+    {
+        //DTO 출력
+        System.out.println("클라이언트로부터 받은 유저 아이디와 프로필 이미지 정보 : " + profileImageDTO);
+
+        //서비스 레이어에게 DTO전달
+        UserResponseDTO userResponseDTO = userServiceImpl.changeProfileImage(profileImageDTO);
+
+        //반환
+        return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
     }
 
     //Check user 함수가 필요, 만약 check user에서 유저 존재 여부를 확인하면 jwt 토큰을 전송해줘야함

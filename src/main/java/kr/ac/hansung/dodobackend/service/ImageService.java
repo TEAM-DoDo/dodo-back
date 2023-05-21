@@ -16,12 +16,12 @@ import java.util.*;
 @Service
 public class ImageService {
     private final String imagePath = "/images/";
-    public boolean putFile(String storePath,MultipartFile file,String name){
-        if (file == null) return false;
-        if (file.isEmpty()) return false;
+    public String putFile(String storePath,MultipartFile file,String name){
+        if (file == null) return null;
+        if (file.isEmpty()) return null;
         //do 가 존재하는지 확인하는 무결성 코드 필요
         Path folderPath = CreatePath(imagePath+storePath);
-        if (folderPath==null) return false;
+        if (folderPath==null) return null;
 
         //향후 데이터 베이스와 저장된 이미지를 연동하는 코드가 필요함
         String storeName = file.getOriginalFilename();
@@ -36,10 +36,10 @@ public class ImageService {
         } catch (IOException e){
             e.printStackTrace();
             System.out.println("[Ignored]" + path);
-            return false;
+            return null;
         }
         System.out.println("[Saved]" + path);
-        return true;
+        return storeName;
     }
     //호출 전에 두 존재 여부를 확인했다고 가정한 뒤 작성되는 코드
     public boolean putFiles(String id,List<MultipartFile> files) throws IOException{

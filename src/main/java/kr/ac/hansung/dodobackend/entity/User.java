@@ -26,40 +26,30 @@ public class User{
     private String address;
     @Column(name="gender")
     private String gender;
+    @Column(name="category")
+    private String category;
     @Column(name="level")
     private int level;
-    @Column(name="badge")
-    private String badge;
-    @Column(name="schedule")
-    private String schedule;
     @Column(name="profileImagePath")
     private String profileImagePath;
 
+    public void UpdateProfileImagePath(String newPath)
+    {
+        this.profileImagePath = newPath;
+    }
+
     @Builder //id를 제외한 나머지 필드들을 매개변수로 받는 빌더패턴에 사용될 생성자
-    private User(String phoneNumber, String nickname, String dateOfBirth, String address, String gender,
-                 int level, String badge, String schedule, String profileImagePath)
+    private User(String phoneNumber, String nickname, String dateOfBirth,
+                 String address, String gender, String category, int level, String profileImagePath)
     {
         this.phoneNumber = phoneNumber;
         this.nickname = nickname;
         this.dateOfBirth = dateOfBirth;
         this.address = address;
         this.gender = gender;
+        this.category = category;
         this.level = level;
-        this.badge = badge;
-        this.schedule = schedule;
         this.profileImagePath = profileImagePath;
     }
-
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<Notice> notices = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "user")
-//    private List<InterestOfUser> interestOfUserList = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "user")
-//    private List<CommunityOfUser> communityOfUserList = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "user")
-//    private List<ScheduleOfUser> scheduleOfUserList = new ArrayList<>();
 
 }
