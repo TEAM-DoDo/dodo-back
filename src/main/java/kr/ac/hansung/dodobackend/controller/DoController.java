@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.ac.hansung.dodobackend.entity.Community;
 import kr.ac.hansung.dodobackend.entity.Notice;
 import kr.ac.hansung.dodobackend.entity.Schedule;
+import kr.ac.hansung.dodobackend.repository.CommunityRepository;
 import kr.ac.hansung.dodobackend.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -29,12 +30,13 @@ public class DoController {
     private Map<Integer, Community> doDummy = new HashMap<>();
     @Autowired
     ImageService imageService;
+    @Autowired
+    CommunityRepository communityRepository;
     @GetMapping("/list")
     public ResponseEntity<Map<String,Object>> getDoIDList(){
         Map<String,Object> result = new HashMap<>();
         //현재는 받아온 키셋을 넘겨 보내도록 하고 있음 향후 쿼리로 변경하여 바로 리스트를 받아와 전송하도록 하면 됨
-        List<Integer> doList = new ArrayList<>(doDummy.keySet());
-        result.put("do_id",doList);
+        result.put("do_id",communityRepository.getAllCommunityId());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
     @PostMapping("/create")
@@ -51,14 +53,20 @@ public class DoController {
         String place = result.get("place").toString();
         String description = result.get("description").toString();
         Community doInfo = Community.builder().name(name).description(description).place(place).bannerImagepath("").build();
+        communityRepository.save(doInfo);
+
 //        doInfo.setImage(result.get("image").toString());
         //현재는 더미에 데이터를 저장하도록 되어있음
-        doDummy.put(doDummy.size(),doInfo);
+//        doDummy.put(doDummy.size(),doInfo);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/{do_id}")
     public ResponseEntity<Community> getDo(@PathVariable("do_id") int doId){
-        Community data = doDummy.get(doId);
+        Community data = communityRepository.findById((long) doId).orElse(null);
+        if (data == null){
+            System.out.println("Received unknown do id.");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
     //가장 최근의 스케줄을 사용자에게 전송해주는 코드

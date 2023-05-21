@@ -38,7 +38,7 @@ public class ChatSocketHandler extends TextWebSocketHandler {
         System.out.println();
         String payload = message.getPayload();
         Chat chatMessage = objectMapper.readValue(payload, Chat.class);
-        chatMessage.setTime((int)(new Date()).getTime());
+        //chatMessage.setTime((int)(new Date()).getTime());
         sendMessageToAll(chatMessage);
     }
     private void sendMessageToAll(Chat message){
