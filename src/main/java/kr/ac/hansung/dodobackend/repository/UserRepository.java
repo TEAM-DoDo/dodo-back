@@ -1,13 +1,12 @@
-package kr.ac.hansung.dodobackend.dao;
+package kr.ac.hansung.dodobackend.repository;
 
-import kr.ac.hansung.dodobackend.model.User;
+import kr.ac.hansung.dodobackend.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 @Transactional
-public interface UserDao extends JpaRepository<User, String> {
-
+public interface UserRepository extends JpaRepository<User, String> {
+    User findByNickname(String nickname);
 }
