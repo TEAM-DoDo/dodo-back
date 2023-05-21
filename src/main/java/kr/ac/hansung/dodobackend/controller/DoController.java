@@ -3,6 +3,7 @@ package kr.ac.hansung.dodobackend.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.ac.hansung.dodobackend.entity.Community;
+import kr.ac.hansung.dodobackend.entity.Notice;
 import kr.ac.hansung.dodobackend.entity.Schedule;
 import kr.ac.hansung.dodobackend.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,7 @@ public class DoController {
         doInfo.setDoName(result.get("doName").toString());
         doInfo.setPlace(result.get("place").toString());
         doInfo.setDescription(result.get("description").toString());
+        System.out.println(doInfo.getDescription() );
 //        doInfo.setImage(result.get("image").toString());
         //현재는 더미에 데이터를 저장하도록 되어있음
         doDummy.put(doDummy.size(),doInfo);
@@ -113,5 +115,20 @@ public class DoController {
         }
         //이미지를 가져오는 알고리즘 작성
         return new ResponseEntity<>(result,header,HttpStatus.OK);
+    }
+    //공지사항을 추가하는 코드
+    @PostMapping("/{do_id}/notice")
+    public ResponseEntity<?> postNewNotice(@PathVariable("do_id") int doId, @Validated @RequestBody Notice notice){
+        //어드민인지 확인하는 코드
+        boolean isAdmin = true;
+        if (!isAdmin){
+            return new ResponseEntity<>("{\"message\" : \"Permissions not allowed.\"}",HttpStatus.BAD_REQUEST);
+        }
+        Community data = doDummy.get(doId);
+        if (data == null){
+            return new ResponseEntity<>("{\"message\" : \"Do for this id does not exist.\"}",HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

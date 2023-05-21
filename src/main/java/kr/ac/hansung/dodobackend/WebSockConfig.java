@@ -17,6 +17,6 @@ public class WebSockConfig implements WebSocketConfigurer , WebSocketMessageBrok
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(chatSocketHandler, "/chat").setAllowedOrigins("*/*");
+        registry.addHandler(chatSocketHandler, "/api/chat").setAllowedOrigins("*/*");
     }
 }
