@@ -3,6 +3,7 @@ package kr.ac.hansung.dodobackend.controller;
 import jakarta.validation.Valid;
 import kr.ac.hansung.dodobackend.dto.*;
 import kr.ac.hansung.dodobackend.jwt.JwtTokenProvider;
+import kr.ac.hansung.dodobackend.service.AuthService;
 import kr.ac.hansung.dodobackend.service.ImageService;
 import kr.ac.hansung.dodobackend.service.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,25 @@ public class UserController {
     private final JwtTokenProvider jwtTokenProvider; //생성자 주입
     private final UserServiceImpl userServiceImpl; //생성자 주입
     private final ImageService imageService; //생성자 주입
+    private final AuthService authService;
+    //인증번호 전송
+    @GetMapping("/send-verification")
+    public ResponseEntity<?> sendVerificationCode(@RequestBody HashMap<String, Object> param){
+        var phoneNum = param.get("phoneNumber").toString();
+        System.out.println(phoneNum);
+        authService.sendVerification(phoneNum);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @GetMapping("/check-verification")
+    public ResponseEntity<?> checkVerificationCode(@RequestBody HashMap<String, Object> param){
+        var phoneNum = param.get("phoneNumber").toString();
+        var certNumber = param.get("certNumber").toString();
+        //System.out.println(certNumber);
+        if (!authService.checkVerification(phoneNum,certNumber)){
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
     //아이디로 유저 조회
     @GetMapping("/{id}")
@@ -122,7 +142,10 @@ public class UserController {
 //        if (d == null){
 //            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 //        }
-        return new ResponseEntity<>(jwtTokenProvider.createToken(),HttpStatus.OK);
+        var token = jwtTokenProvider.createToken();
+        System.out.println(token.getAccessToken());
+        System.out.println(token.getRefreshToken());
+        return new ResponseEntity<>(token,HttpStatus.OK);
     }
     //이후 유저의 호출을 받아서 회원가입 진행
 }
