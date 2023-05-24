@@ -15,15 +15,15 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @RequiredArgsConstructor
 @EnableWebSocket
 public class DoChatConfig implements WebSocketMessageBrokerConfigurer {
+
+    private final ChatInterceptor chatInterceptor;
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/api/chat").setAllowedOrigins("*/*").withSockJS();
     }
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-
-        registry.enableSimpleBroker("/queue", "/topic");
-
+        registry.enableSimpleBroker("/queue", "/topic","/room");
         registry.setApplicationDestinationPrefixes("/app");
     }
 }
