@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+
 @RestController //Rest api를 위한 어노테이션. @Controller + @ResponseBody
 @RequestMapping(value="/api/users") // 컨트롤러 기본 uri 지정. uri는 명사, 복수, 소문자, 하이픈(-) 사용 지향.
 @RequiredArgsConstructor //생성자 주입 지향할 것. @NotNull이 붙은 필드와 final 필드에 대해 의존성 주입
