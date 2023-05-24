@@ -1,23 +1,15 @@
 package kr.ac.hansung.dodobackend.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import kr.ac.hansung.dodobackend.dto.*;
 import kr.ac.hansung.dodobackend.jwt.JwtTokenProvider;
 import kr.ac.hansung.dodobackend.service.AuthService;
 import kr.ac.hansung.dodobackend.service.ImageService;
-import kr.ac.hansung.dodobackend.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import kr.ac.hansung.dodobackend.entity.User;
 import kr.ac.hansung.dodobackend.service.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController //Rest api를 위한 어노테이션. @Controller + @ResponseBody
 @RequestMapping(value="/api/users") // 컨트롤러 기본 uri 지정. uri는 명사, 복수, 소문자, 하이픈(-) 사용 지향.
@@ -98,7 +90,7 @@ public class UserController {
 
     //프로필 이미지 업데이트
     @PutMapping
-    public ResponseEntity<UserResponseDTO> ChangeProfileImage(ProfileImageDTO profileImageDTO) {
+    public ResponseEntity<UserResponseDTO> ChangeProfileImage(@Valid @RequestBody ProfileImageDTO profileImageDTO) {
         //DTO 출력
         System.out.println("클라이언트로부터 받은 유저 아이디와 프로필 이미지 정보 : " + profileImageDTO);
 
@@ -110,38 +102,25 @@ public class UserController {
     }
 
     //사용자 has 모임
-    @GetMapping("/communityList")
-    public ResponseEntity<CommunityListOfUserDTO> GetMyCommunityList(Long id) {
+    @GetMapping("/doList")
+    public ResponseEntity<DoListOfUserDTO> GetMyDoList(@RequestParam("id") Long id) {
         //조회
         System.out.println("조회하고 싶은 유저의 아이디 : " + id);
-        CommunityListOfUserDTO communityListOfUserDTO = userServiceImpl.GetCommunityListOfUserById(id);
+        DoListOfUserDTO doListOfUserDTO = userServiceImpl.GetDoListOfUserById(id);
 
         //반환
-        return new ResponseEntity<>(communityListOfUserDTO, HttpStatus.OK);
+        return new ResponseEntity<>(doListOfUserDTO, HttpStatus.OK);
     }
 
     //사용자 has 일정
     @GetMapping("/scheduleList")
-    public ResponseEntity<ScheduleListOfUserDTO> GetMyScheduleList(Long id) {
+    public ResponseEntity<ScheduleListOfUserDTO> GetMyScheduleList(@RequestParam("id") Long id) {
         //조회
         System.out.println("조회하고 싶은 유저의 아이디 : " + id);
         ScheduleListOfUserDTO scheduleListOfUserDTO = userServiceImpl.GetScheduleListOfUserById(id);
 
         //반환
         return new ResponseEntity<>(scheduleListOfUserDTO, HttpStatus.OK);
-    }
-
-    @PostMapping("/community")
-    public ResponseEntity<String> CreateCommunityOfUser(Long userId, Long communityId)
-    {
-        //DTO 출력
-        System.out.println("클라이언트의 아이디와 입장한 커뮤니티 아이디 : " + userId + ", " + communityId);
-
-        //서비스 레이어에게 DTO전달
-        userServiceImpl.CreateCommunityOfUser(userId, communityId);
-
-        //반환
-        return new ResponseEntity<>("조회 성공", HttpStatus.CREATED);
     }
 
     //Check user 함수가 필요, 만약 check user에서 유저 존재 여부를 확인하면 jwt 토큰을 전송해줘야함

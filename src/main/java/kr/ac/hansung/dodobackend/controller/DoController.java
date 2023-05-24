@@ -2,10 +2,10 @@ package kr.ac.hansung.dodobackend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.ac.hansung.dodobackend.entity.Community;
+import kr.ac.hansung.dodobackend.entity.Do;
 import kr.ac.hansung.dodobackend.entity.Notice;
 import kr.ac.hansung.dodobackend.entity.Schedule;
-import kr.ac.hansung.dodobackend.repository.CommunityRepository;
+import kr.ac.hansung.dodobackend.repository.DoRepository;
 import kr.ac.hansung.dodobackend.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -19,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,16 +26,16 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/do")
 public class DoController {
-    private Map<Integer, Community> doDummy = new HashMap<>();
+    private Map<Integer, Do> doDummy = new HashMap<>();
     @Autowired
     ImageService imageService;
     @Autowired
-    CommunityRepository communityRepository;
+    DoRepository doRepository;
     @GetMapping("/list")
     public ResponseEntity<Map<String,Object>> getDoIDList(){
         Map<String,Object> result = new HashMap<>();
         //현재는 받아온 키셋을 넘겨 보내도록 하고 있음 향후 쿼리로 변경하여 바로 리스트를 받아와 전송하도록 하면 됨
-        result.put("do_id",communityRepository.getAllCommunityId());
+        result.put("do_id", doRepository.getAllCommunityId());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
     @PostMapping("/create")
@@ -52,8 +51,8 @@ public class DoController {
         String name = result.get("doName").toString();
         String place = result.get("place").toString();
         String description = result.get("description").toString();
-        Community doInfo = Community.builder().name(name).description(description).place(place).bannerImagepath("").build();
-        communityRepository.save(doInfo);
+        Do doInfo = Do.builder().name(name).description(description).place(place).bannerImagepath("").build();
+        doRepository.save(doInfo);
 
 //        doInfo.setImage(result.get("image").toString());
         //현재는 더미에 데이터를 저장하도록 되어있음
@@ -61,8 +60,8 @@ public class DoController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/{do_id}")
-    public ResponseEntity<Community> getDo(@PathVariable("do_id") int doId){
-        Community data = communityRepository.findById((long) doId).orElse(null);
+    public ResponseEntity<Do> getDo(@PathVariable("do_id") int doId){
+        Do data = doRepository.findById((long) doId).orElse(null);
         if (data == null){
             System.out.println("Received unknown do id.");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -72,7 +71,7 @@ public class DoController {
     //가장 최근의 스케줄을 사용자에게 전송해주는 코드
     @GetMapping("/{do_id}/schedule")
     public ResponseEntity<Schedule> getDoSchedule(@PathVariable("do_id") int doId){
-        Community doData = doDummy.get(doId);
+        Do doData = doDummy.get(doId);
         if (doData == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -131,7 +130,7 @@ public class DoController {
         if (!isAdmin){
             return new ResponseEntity<>("{\"message\" : \"Permissions not allowed.\"}",HttpStatus.BAD_REQUEST);
         }
-        Community data = doDummy.get(doId);
+        Do data = doDummy.get(doId);
         if (data == null){
             return new ResponseEntity<>("{\"message\" : \"Do for this id does not exist.\"}",HttpStatus.BAD_REQUEST);
         }

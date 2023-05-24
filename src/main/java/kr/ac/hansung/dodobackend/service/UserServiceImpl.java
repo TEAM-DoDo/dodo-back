@@ -3,8 +3,7 @@ package kr.ac.hansung.dodobackend.service;
 import kr.ac.hansung.dodobackend.dto.*;
 import kr.ac.hansung.dodobackend.entity.*;
 import kr.ac.hansung.dodobackend.exception.UserNotFoundException;
-import kr.ac.hansung.dodobackend.repository.CommunityOfUserRepository;
-import kr.ac.hansung.dodobackend.repository.CommunityRepository;
+import kr.ac.hansung.dodobackend.repository.DoOfUserRepository;
 import kr.ac.hansung.dodobackend.repository.ScheduleOfUserRepository;
 import kr.ac.hansung.dodobackend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +20,8 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService{ //유저 서비스 레이어
     private final UserRepository userRepository; //생성자 주입
     private final ImageService imageService; //생성자 주입
-    private final CommunityOfUserRepository communityOfUserRepository; //생성자 주입
+    private final DoOfUserRepository doOfUserRepository; //생성자 주입
     private final ScheduleOfUserRepository scheduleOfUserRepository; //생성자 주입
-    private final CommunityRepository communityRepository; //생성자 주입
     @Override
     public UserResponseDTO GetUserById(Long id) {
         //아이디로 조회
@@ -141,7 +139,7 @@ public class UserServiceImpl implements UserService{ //유저 서비스 레이�
     }
 
     @Override
-    public CommunityListOfUserDTO GetCommunityListOfUserById(Long id) {
+    public DoListOfUserDTO GetDoListOfUserById(Long id) {
         //내 정보 조회
         Optional<User> user = userRepository.findById(id);
         if(user.isPresent() == false)
@@ -153,17 +151,18 @@ public class UserServiceImpl implements UserService{ //유저 서비스 레이�
         }
 
         //내가 속한 커뮤니티들 조회
-        List<CommunityOfUser> communityOfUserList = communityOfUserRepository.findByUser(user.get());
-        List<Community> communityList = new ArrayList<>();
-        for(CommunityOfUser communityOfUser : communityOfUserList)
+        List<DoOfUser> doOfUserList = doOfUserRepository.findByUser(user.get());
+        List<Do> doList = new ArrayList<>();
+        for(DoOfUser doOfUser : doOfUserList)
         {
-            communityList.add(communityOfUser.getCommunity());
+            Do aDo = doOfUser.getMyDo();
+            doList.add(aDo);
         }
 
         //반환
-        CommunityListOfUserDTO communityListOfUserDTO = CommunityListOfUserDTO.builder().user(user.get())
-                .communityList(communityList).build();
-        return communityListOfUserDTO;
+        DoListOfUserDTO doListOfUserDTO = DoListOfUserDTO.builder().user(user.get())
+                .doList(doList).build();
+        return doListOfUserDTO;
     }
 
     @Override
@@ -177,6 +176,7 @@ public class UserServiceImpl implements UserService{ //유저 서비스 레이�
             throw UserNotFoundException.builder().code(HttpStatus.NOT_FOUND.value()).message(errorMessage).build();
             //throw 시 메서드의 실행이 중지되어, 아래 코드는 실행되지 않음
         }
+        System.out.println(user.get());
 
         //내가 속한 일정들 조회
         List<ScheduleOfUser> scheduleOfUserList = scheduleOfUserRepository.findByUser(user.get());
@@ -189,17 +189,9 @@ public class UserServiceImpl implements UserService{ //유저 서비스 레이�
         //반환
         ScheduleListOfUserDTO scheduleListOfUserDTO = ScheduleListOfUserDTO.builder().user(user.get())
                 .scheduleList(scheduleList).build();
-        return scheduleListOfUserDTO ;
-    }
+        System.out.println(scheduleListOfUserDTO);
+        return scheduleListOfUserDTO;
 
-    public void CreateCommunityOfUser(Long userId, Long communityId)
-    {
-        //조회
-        Optional<User> user = userRepository.findById(userId);
-        Optional<Community> community = communityRepository.findById(communityId);
-
-        //저장
-        CommunityOfUser newCommunityOfUser = CommunityOfUser.builder().user(user.get()).community(community.get())
-                .isHostTrue(false).isLikeTrue(false).build();
+//        return null;
     }
 }

@@ -3,12 +3,9 @@ package kr.ac.hansung.dodobackend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(exclude = "community")
+@ToString(exclude = "myDo")
 @Table(name = "schedule")
 @Entity
 public class Schedule {
@@ -32,12 +29,12 @@ public class Schedule {
 
     //이 일정이 소속된 커뮤니티의 기본키를 외래키로 받음
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "community_id")
-    private Community community;
+    @JoinColumn(name = "do_id")
+    private Do myDo;
 
     @Builder
     public Schedule(String title, String date, String startTime, String endTime,
-                    String place, String detail, Community community)
+                    String place, String detail, Do myDo)
     {
         this.title = title;
         this.date = date;
@@ -45,6 +42,6 @@ public class Schedule {
         this.endTime = endTime;
         this.place = place;
         this.detail = detail;
-        this.community = community;
+        this.myDo = myDo;
     }
 }
