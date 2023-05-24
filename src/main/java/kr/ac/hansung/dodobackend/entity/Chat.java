@@ -5,7 +5,7 @@ import lombok.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(exclude = "community")
+@ToString(exclude = "myDo")
 @Table(name = "chat")
 @Entity
 public class Chat {
@@ -24,8 +24,8 @@ public class Chat {
 
     //소속된 커뮤니티의 기본키를 외래키로 가짐
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "community_id")
-    private Community community;
+    @JoinColumn(name = "do_id")
+    private Do myDo;
 
     @Builder
     private Chat(String nickname, String reportingDate, String content, String profileImagePath)

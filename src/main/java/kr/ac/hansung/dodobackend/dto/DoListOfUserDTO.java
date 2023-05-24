@@ -1,6 +1,6 @@
 package kr.ac.hansung.dodobackend.dto;
 
-import kr.ac.hansung.dodobackend.entity.Schedule;
+import kr.ac.hansung.dodobackend.entity.Do;
 import kr.ac.hansung.dodobackend.entity.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,8 +10,8 @@ import java.util.List;
 
 @Getter
 @Builder
-@ToString(exclude = "scheduleList")
-public class ScheduleListOfUserDTO {
+@ToString(exclude = "doList")
+public class DoListOfUserDTO { //유저가 참가한 커뮤니티 리스트를 반환하는 DTO
     private final User user;
-    private final List<Schedule> scheduleList;
+    private final List<Do> doList;
 }

@@ -1,7 +1,6 @@
 package kr.ac.hansung.dodobackend.repository;
 
-import kr.ac.hansung.dodobackend.entity.Chat;
-import kr.ac.hansung.dodobackend.entity.Community;
+import kr.ac.hansung.dodobackend.entity.Do;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -11,7 +10,7 @@ import java.util.List;
 
 @Repository
 @Transactional
-public interface CommunityRepository extends JpaRepository<Community, Long> {
-    @Query("select id from Community")
+public interface DoRepository extends JpaRepository<Do, Long> {
+    @Query("select id from Do")
     List<Long> getAllCommunityId();
 }
