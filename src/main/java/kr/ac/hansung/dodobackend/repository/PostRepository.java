@@ -11,7 +11,7 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByMyDo(Do findedDo);
 
-    @Query("select distinct p.id from Post p join p.myDo where p.myDo.id = : doId") //do하고 post join
+    @Query("select distinct p.id from Post p join p.myDo where p.myDo.id = :doId") //do하고 post join
     List<Long> findPostIdsByDoId(@Param("doId") Long doId);
 
 }

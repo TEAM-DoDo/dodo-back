@@ -42,10 +42,12 @@ public class ImageController {
         return new ResponseEntity<>("{"+result+"}",HttpStatus.OK);
     }
     //이미지 이름을 받아 다운로드 하는 함수 향후 아이디를 받아 다운로드 하도록 만들 예정
-    @GetMapping("/download/{dodoId}/{imageName}")
-    public ResponseEntity<Resource> getImage(@PathVariable int dodoId,@PathVariable String imageName){
-        System.out.println("Image request from dodo id : " + dodoId + " / image name : " + imageName);
-        var file = imageService.getFile(Integer.toString(dodoId),imageName);
+    @GetMapping("/download/{dodoId}/{imageId}")
+    public ResponseEntity<Resource> getImage(@PathVariable("dodoId") int dodoId,@PathVariable("imageId") Long imageId){
+        System.out.println("Image request from dodo id : " + dodoId + " / image name : " + imageId);
+        Optional<Post> post = postRepository.findById(imageId);
+        String imageSavedFolderName = "/" + dodoId + "/posts/";
+        var file = imageService.getFile(imageSavedFolderName,post.get().getImagePath());
         if (file == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         FileSystemResource result = new FileSystemResource(file);
         HttpHeaders header = new HttpHeaders();
