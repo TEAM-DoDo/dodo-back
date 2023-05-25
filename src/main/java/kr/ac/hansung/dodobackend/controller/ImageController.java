@@ -1,6 +1,11 @@
 package kr.ac.hansung.dodobackend.controller;
 
+import kr.ac.hansung.dodobackend.entity.Do;
+import kr.ac.hansung.dodobackend.entity.Post;
+import kr.ac.hansung.dodobackend.repository.DoRepository;
+import kr.ac.hansung.dodobackend.repository.PostRepository;
 import kr.ac.hansung.dodobackend.service.ImageService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -20,10 +25,12 @@ import java.util.*;
 
 @RestController
 @RequestMapping(value="/api/image")
+@RequiredArgsConstructor
 public class ImageController {
-    @Autowired
-    ImageService imageService;
-    private final String imagePath = "/images/";
+    private final ImageService imageService;
+    private final PostRepository postRepository;
+    private final DoRepository doRepository;
+
     //현재 저장되어 있는 이미지의 갯수를 전송해줌
     @GetMapping("/download/{dodoId}/length")
     public ResponseEntity<?> getImageLength(@PathVariable int dodoId){
@@ -55,18 +62,27 @@ public class ImageController {
     //이미지 이름 리스트를 가져오는 함수, 향후 아이디를 가져오는 함수로 변경 예정
     @GetMapping("/download/{dodoId}/list")
     ResponseEntity<Map<String,Object>> getImageIdList(@PathVariable int dodoId){
+        //Optional<Do> findedDo = doRepository.findById(Long.valueOf(dodoId));
+        List<Long> postsIdList = postRepository.findPostIdsByDoId(Long.valueOf(dodoId));
+
         Map<String,Object> result = new HashMap<>();
         List<String> imageId = imageService.getImageIdList(Integer.toString(dodoId));
-        result.put("image_id",imageId);
+        //result.put("image_id",imageId);
+        result.put("image_id",postsIdList);
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
     @PostMapping("/upload/{dodoId}")
-    public ResponseEntity<?> UploadsImage(@PathVariable int dodoId,@RequestPart List<MultipartFile> files)
+    public ResponseEntity<?> UploadsImage(@PathVariable Long dodoId,@RequestPart List<MultipartFile> files)
     {
         boolean isFileUploaded = false;
         try {
-            isFileUploaded = imageService.putFiles(Integer.toString(dodoId),files);
-        }catch (IOException e){
+//            isFileUploaded = imageService.putFiles(String.valueOf(dodoId),files);
+            String imageSavedFolderName = "/" + dodoId + "/posts/";
+            String imagePath = imageService.putFile(imageSavedFolderName, files.get(0), files.get(0).getOriginalFilename());
+            Optional<Do> findedDo = doRepository.findById(dodoId);
+            Post newPost = Post.builder().imagePath(imagePath).myDo(findedDo.get()).build();
+            postRepository.save(newPost);
+        }catch (Exception e){
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INSUFFICIENT_STORAGE);
         }

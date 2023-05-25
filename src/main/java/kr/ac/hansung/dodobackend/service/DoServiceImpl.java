@@ -2,17 +2,13 @@ package kr.ac.hansung.dodobackend.service;
 
 import kr.ac.hansung.dodobackend.dto.NoticeDTO;
 import kr.ac.hansung.dodobackend.dto.PostDTO;
-import kr.ac.hansung.dodobackend.entity.Chat;
 import kr.ac.hansung.dodobackend.entity.Do;
 import kr.ac.hansung.dodobackend.entity.Notice;
 import kr.ac.hansung.dodobackend.entity.Post;
-import kr.ac.hansung.dodobackend.exception.UserNotFoundException;
-import kr.ac.hansung.dodobackend.repository.ChatRepository;
 import kr.ac.hansung.dodobackend.repository.DoRepository;
 import kr.ac.hansung.dodobackend.repository.NoticeRepository;
 import kr.ac.hansung.dodobackend.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,8 +19,9 @@ import java.util.Optional;
 public class DoServiceImpl implements DoService{
     private final DoRepository doRepository;
     private final PostRepository postRepository;
-    private final ChatRepository chatRepository;
+    private final ImageService imageService;
     private final NoticeRepository noticeRepository;
+    private static int imageNumber = 0;
 
     public List<Post> GetPostsByDoId(Long doId)
     {
@@ -47,7 +44,10 @@ public class DoServiceImpl implements DoService{
     public void CreatePost(Long doId, PostDTO postDTO)
     {
         Optional<Do> findedDo = doRepository.findById(doId);
-        Post newPost = Post.builder().imagePath(postDTO.getImagePath()).myDo(findedDo.get()).build();
+        String imageSavedFolderName = "/posts/";
+        String imageName = String.valueOf(++imageNumber);
+        String imagePath = imageService.putFile(imageSavedFolderName, postDTO.getFiles().get(0), imageName);
+        Post newPost = Post.builder().imagePath(imagePath).myDo(findedDo.get()).build();
         postRepository.save(newPost);
     }
 
