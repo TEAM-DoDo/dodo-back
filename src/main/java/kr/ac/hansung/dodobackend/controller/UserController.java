@@ -1,8 +1,13 @@
 package kr.ac.hansung.dodobackend.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import kr.ac.hansung.dodobackend.dto.*;
+import kr.ac.hansung.dodobackend.entity.User;
+import kr.ac.hansung.dodobackend.exception.UserNotFoundException;
 import kr.ac.hansung.dodobackend.jwt.JwtTokenProvider;
+import kr.ac.hansung.dodobackend.repository.UserRepository;
 import kr.ac.hansung.dodobackend.service.AuthService;
 import kr.ac.hansung.dodobackend.service.ImageService;
 import kr.ac.hansung.dodobackend.service.UserServiceImpl;
@@ -12,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @RestController //Rest api를 위한 어노테이션. @Controller + @ResponseBody
 @RequestMapping(value="/api/users") // 컨트롤러 기본 uri 지정. uri는 명사, 복수, 소문자, 하이픈(-) 사용 지향.
@@ -22,23 +28,38 @@ public class UserController {
     private final UserServiceImpl userServiceImpl; //생성자 주입
     private final ImageService imageService; //생성자 주입
     private final AuthService authService;
+    private final UserRepository userRepository;
     //인증번호 전송
-    @GetMapping("/send-verification")
+    @PostMapping("/send-verification")
     public ResponseEntity<?> sendVerificationCode(@RequestBody HashMap<String, Object> param){
         var phoneNum = param.get("phoneNumber").toString();
         System.out.println(phoneNum);
         authService.sendVerification(phoneNum);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    @GetMapping("/check-verification")
-    public ResponseEntity<?> checkVerificationCode(@RequestBody HashMap<String, Object> param){
+    @PostMapping("/check-verification")
+    public ResponseEntity<LoginDTO> checkVerificationCode(@RequestBody HashMap<String, Object> param){
         var phoneNum = param.get("phoneNumber").toString();
         var certNumber = param.get("certNumber").toString();
         //System.out.println(certNumber);
         if (!authService.checkVerification(phoneNum,certNumber)){
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        UserResponseDTO userInfo = null;
+        LoginDTO loginDTO = new LoginDTO();
+        try {
+            userInfo = userServiceImpl.GetUserByPhoneNumber(phoneNum);
+        }catch (UserNotFoundException e){
+            System.out.println("해당 전화번호의 사용자가 발견되지 않았습니다. 사용자를 생성합니다");
+            User newUser = User.builder().phoneNumber(phoneNum).build();
+            User user = userRepository.save(newUser);
+            loginDTO.setUserdata(user);
+            loginDTO.setTokenInfo(jwtTokenProvider.createToken());
+            return new ResponseEntity<LoginDTO>(loginDTO,HttpStatus.CREATED);
+        }
+        loginDTO.setUserdata(userInfo == null ? null : userInfo.getUser());
+        loginDTO.setTokenInfo(jwtTokenProvider.createToken());
+        return new ResponseEntity<LoginDTO>(loginDTO,HttpStatus.OK);
     }
 
     //아이디로 유저 조회
@@ -129,21 +150,9 @@ public class UserController {
     //로그인 성공시 return은 HttpStatus.OK 및 JWT 토큰 이 경우 바로 홈화면으로 넘어감
     //없을 경우 return은 HttpStatus.BAD_REQUEST이 경우 프론트에서 회원가입으로 넘어감
     //만약 유저가 없다면 회원가입으로 넘어가는 처리 필요
-    @PostMapping("/check")
-    public ResponseEntity<?> checkUser(@RequestBody String json){
-        System.out.println(json);//향후 인증번호를 이곳에서 검증해서 체킹하는 방법도 가능할 듯 하다
-//        Map<String,Object> result;
-//        try{
-//            result = new ObjectMapper().readValue(json, HashMap.class);
-//        } catch (JsonProcessingException e){
-//            e.printStackTrace();
-//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//        }
-//        var d = result.get("phoneNumber").toString();
-//        System.out.println(json);
-//        if (d == null){
-//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//        }
+    //테스트용 코드로 변경
+    @GetMapping("/check")
+    public ResponseEntity<?> checkUser(){
         var token = jwtTokenProvider.createToken();
         System.out.println(token.getAccessToken());
         System.out.println(token.getRefreshToken());
