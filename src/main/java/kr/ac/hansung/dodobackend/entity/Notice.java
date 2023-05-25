@@ -23,7 +23,7 @@ public class Notice { //커뮤니티의 공지사항
     private String reportingDate; //작성일
 
     //이 공지사항이 소속된 커뮤니티의 기본키를 외래키로 받음
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="do_id")
     private Do myDo;
 

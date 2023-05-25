@@ -5,7 +5,7 @@ import lombok.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(exclude = {"user", "Do"}) //연관관계 필드가 여러개라면 중괄호 사용
+@ToString(exclude = {"user", "myDo"}) //연관관계 필드가 여러개라면 중괄호 사용
 @Table(name = "doOfUser")
 @Entity
 public class DoOfUser {

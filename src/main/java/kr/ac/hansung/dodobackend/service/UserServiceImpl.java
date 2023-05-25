@@ -176,7 +176,6 @@ public class UserServiceImpl implements UserService{ //유저 서비스 레이�
             throw UserNotFoundException.builder().code(HttpStatus.NOT_FOUND.value()).message(errorMessage).build();
             //throw 시 메서드의 실행이 중지되어, 아래 코드는 실행되지 않음
         }
-        System.out.println(user.get());
 
         //내가 속한 일정들 조회
         List<ScheduleOfUser> scheduleOfUserList = scheduleOfUserRepository.findByUser(user.get());
@@ -189,9 +188,6 @@ public class UserServiceImpl implements UserService{ //유저 서비스 레이�
         //반환
         ScheduleListOfUserDTO scheduleListOfUserDTO = ScheduleListOfUserDTO.builder().user(user.get())
                 .scheduleList(scheduleList).build();
-        System.out.println(scheduleListOfUserDTO);
         return scheduleListOfUserDTO;
-
-//        return null;
     }
 }
