@@ -8,6 +8,7 @@ import kr.ac.hansung.dodobackend.repository.ScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,6 +34,15 @@ public class ScheduleServiceImpl implements ScheduleService{
         Schedule schedule = Schedule.builder().date(date).title(title).startTime(startTime).endTime(endTime)
                 .place(place).detail(detail).myDo(currentDo.get()).build();
         scheduleRepository.save(schedule);
+    }
+
+    public List<Schedule> GetSchedulesByDoId(Do findedDo)
+    {
+        //조회
+        List<Schedule> schedules = scheduleRepository.findByMyDo(findedDo);
+
+        //반환
+        return schedules;
     }
 
 }

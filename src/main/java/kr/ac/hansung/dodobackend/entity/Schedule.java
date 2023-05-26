@@ -28,7 +28,7 @@ public class Schedule {
     private String detail; //상세정보
 
     //이 일정이 소속된 커뮤니티의 기본키를 외래키로 받음
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "do_id")
     private Do myDo;
 

@@ -23,7 +23,7 @@ public class Chat {
 
     
     //소속된 커뮤니티의 기본키를 외래키로 가짐
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "do_id")
     private Do myDo;
 

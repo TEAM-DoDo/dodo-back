@@ -2,11 +2,15 @@ package kr.ac.hansung.dodobackend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.ac.hansung.dodobackend.entity.Do;
-import kr.ac.hansung.dodobackend.entity.Notice;
-import kr.ac.hansung.dodobackend.entity.Schedule;
+import jakarta.validation.Valid;
+import kr.ac.hansung.dodobackend.dto.NoticeDTO;
+import kr.ac.hansung.dodobackend.dto.PostDTO;
+import kr.ac.hansung.dodobackend.entity.*;
 import kr.ac.hansung.dodobackend.repository.DoRepository;
+import kr.ac.hansung.dodobackend.repository.ScheduleRepository;
+import kr.ac.hansung.dodobackend.service.DoServiceImpl;
 import kr.ac.hansung.dodobackend.service.ImageService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -17,20 +21,23 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/do")
+@RequiredArgsConstructor
 public class DoController {
     private Map<Integer, Do> doDummy = new HashMap<>();
-    @Autowired
-    ImageService imageService;
-    @Autowired
-    DoRepository doRepository;
+    private final ImageService imageService;
+    private final DoRepository doRepository;
+    private final ScheduleRepository scheduleRepository;
+    private final DoServiceImpl doService;
     @GetMapping("/list")
     public ResponseEntity<Map<String,Object>> getDoIDList(){
         Map<String,Object> result = new HashMap<>();
@@ -70,17 +77,18 @@ public class DoController {
     }
     //가장 최근의 스케줄을 사용자에게 전송해주는 코드
     @GetMapping("/{do_id}/schedule")
-    public ResponseEntity<Schedule> getDoSchedule(@PathVariable("do_id") int doId){
-        Do doData = doDummy.get(doId);
-        if (doData == null){
+    public ResponseEntity<List<Schedule>> getDoSchedule(@PathVariable("do_id") Long doId){
+        Optional<Do> findedDo = doRepository.findById(doId);
+        if (findedDo.isPresent() == false){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        var schedules = doData.getSchedules();
+
+        var schedules = scheduleRepository.findByMyDo(findedDo.get());
+        System.out.println(schedules);
         if (schedules.isEmpty()){
             return new ResponseEntity<>(HttpStatus.OK);
         }
-        var schedule = schedules.get(schedules.size()-1);
-        return new ResponseEntity<>(schedule,HttpStatus.OK);
+        return new ResponseEntity<>(schedules,HttpStatus.OK);
     }
     @PostMapping("/{do_id}/schedule/create")
     public ResponseEntity<?> createDoSchedule(@PathVariable("do_id") int doId,@Validated @RequestBody String json) {
@@ -136,5 +144,38 @@ public class DoController {
         }
 
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+
+    @GetMapping("/{do_id}/posts")
+    public List<Post> GetPostsByDoId(@PathVariable("do_id") Long id)
+    {
+        System.out.println("do 아이디로 게시글 조회, 입력받은 아이디 : " + id);
+        List<Post> posts = doService.GetPostsByDoId(id);
+        return posts;
+    }
+
+    @GetMapping("/{do_id}/notices")
+    public List<Notice> GetNoticesByDoId(@PathVariable("do_id") Long id)
+    {
+        System.out.println("do 아이디로 공지 조회, 입력받은 아이디 : " + id);
+        List<Notice> notices = doService.GetNoticeByDoId(id);
+        return notices;
+    }
+
+    @PostMapping("/{do_id}/posts")
+    public ResponseEntity<String> CreatePost(@PathVariable("do_id") Long id, @Valid @RequestBody PostDTO postDTO)
+    {
+        System.out.println("do 아이디로 게시글 생성, 입력받은 아이디 : " + id);
+        doService.CreatePost(id, postDTO);
+        return new ResponseEntity<>("게시글 생성 성공", HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{do_id}/notices")
+    public ResponseEntity<String> CreateNotice(@PathVariable("do_id") Long id, @Valid @RequestBody NoticeDTO noticeDTO)
+    {
+        System.out.println("do 아이디로 공지글 생성, 입력받은 아이디 : " + id);
+        doService.CreateNotice(id, noticeDTO);
+        return new ResponseEntity<>("공지글 생성 성공", HttpStatus.CREATED);
     }
 }
