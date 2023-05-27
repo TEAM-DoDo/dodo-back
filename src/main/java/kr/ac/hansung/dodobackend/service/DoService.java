@@ -24,6 +24,6 @@ public interface DoService {
     List<Notice> GetNoticeByDoId(Long doId);
     void CreatePost(Long doId, PostDTO postDTO);
     void CreateNotice(Long doId, NoticeDTO noticeDTO);
-    String uploadTitleImage(int doId, List<MultipartFile> files);
+    void uploadTitleImage(int doId, List<MultipartFile> files);
     File getTitleImage(int doId);
 }

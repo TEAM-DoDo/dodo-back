@@ -80,16 +80,24 @@ public class DoServiceImpl implements DoService {
     }
 
     @Override
-    public String uploadTitleImage(int doId, List<MultipartFile> files)
+    public void uploadTitleImage(int doId, List<MultipartFile> files)
     {
-        String path = imageService.putFile("/title/",files.get(0),Integer.toString(doId));
-        return path;
+        String imageSavedFolderName = "/" + doId + "/banners/";
+        String imageName = files.get(0).getOriginalFilename();
+        String path = imageService.putFile(imageSavedFolderName, files.get(0), imageName);
+        Optional<Do> findedDo = doRepository.findById(Long.valueOf(doId));
+        Do myDo = findedDo.get();
+        myDo.UpdateBannerImage(path);
+        doRepository.save(myDo);
     }
 
     @Override
     public File getTitleImage(int doId)
     {
-        File file = imageService.getFile("/title/",Integer.toString(doId)+ ".jpeg");
+        String imageSavedFolderName = "/" + doId + "/banners/";
+        String imagePath = doRepository.findById(Long.valueOf(doId)).get().getBannerImagepath();
+        imagePath = imagePath.contains(".jpeg") ? imagePath :  imagePath + ".jpeg";
+        File file = imageService.getFile(imageSavedFolderName, imagePath);
         if(file.exists() == false)
         {
             String errorMessage = "Title image File을 찾을 수 없습니다.";

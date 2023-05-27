@@ -26,6 +26,11 @@ public class Do {
     @Column(name="bannerImagePath")
     private String bannerImagepath;
 
+    public void UpdateBannerImage(String path)
+    {
+        this.bannerImagepath = path;
+    }
+
     //공지사항
     //@OneToMany(mappedBy="myDo", cascade = CascadeType.ALL, orphanRemoval = true) //영속성 연계와 고아객체 자동삭제.
     //private List<Notice> notices = new ArrayList<>();

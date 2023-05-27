@@ -104,7 +104,7 @@ public class DoController {
 
     //타이틀 이미지 사진
     @GetMapping("/{do_id}/title-image")
-    public ResponseEntity<Resource> uploadTitleImage(@PathVariable("do_id") int doId) {
+    public ResponseEntity<Resource> getTitleImage(@PathVariable("do_id") int doId) {
         System.out.println("Request do title image : " + doId);
         File file = doService.getTitleImage(doId);
         FileSystemResource result = new FileSystemResource(file);

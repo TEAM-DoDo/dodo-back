@@ -13,14 +13,14 @@ import org.springframework.web.filter.GenericFilterBean;
 import java.io.IOException;
 //jwt 필터 현재 디버깅을 위해 비활성화
 @RequiredArgsConstructor
-@WebFilter(
-        urlPatterns = {
-                //"/api/user/*",
-                "/api/image/*",
-                "/api/do/*",
-                //"/api/chat/*"
-        }
-)
+//@WebFilter(
+//        urlPatterns = {
+//                //"/api/user/*",
+//                "/api/image/*",
+//                "/api/do/*",
+//                //"/api/chat/*"
+//        }
+//)
 ////@Component
 @Order(1)
 public class JwtAuthenticationFilter implements Filter {

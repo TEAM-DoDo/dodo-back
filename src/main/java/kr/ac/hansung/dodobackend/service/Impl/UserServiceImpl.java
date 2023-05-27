@@ -154,15 +154,18 @@ public class UserServiceImpl implements UserService { //유저 서비스 레이�
         //내가 속한 커뮤니티들 조회
         List<DoOfUser> doOfUserList = doOfUserRepository.findByUser(user.get());
         List<Do> doList = new ArrayList<>();
+        List<DoResponseDTO> doResponseDTOList = new ArrayList<>();
         for(DoOfUser doOfUser : doOfUserList)
         {
             Do aDo = doOfUser.getMyDo();
             doList.add(aDo);
+            DoResponseDTO doResponseDTO = DoResponseDTO.builder().id(aDo.getId()).name(aDo.getName()).description(aDo.getDescription()).place(aDo.getPlace()).bannerImagepath(aDo.getBannerImagepath()).build();
+            doResponseDTOList.add(doResponseDTO);
         }
 
         //반환
-        DoListOfUserDTO doListOfUserDTO = DoListOfUserDTO.builder().user(user.get())
-                .doList(doList).build();
+        DoListOfUserDTO doListOfUserDTO = DoListOfUserDTO.builder().userId(user.get().getId())
+                .doResponseDTOList(doResponseDTOList).build();
         return doListOfUserDTO;
     }
 

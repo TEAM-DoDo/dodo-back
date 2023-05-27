@@ -86,7 +86,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public File getFile(String id,String fileName)
+    public File getFile(String id, String fileName)
     {
         var path = imagePath+ id;
         if (!checkPath(path)){

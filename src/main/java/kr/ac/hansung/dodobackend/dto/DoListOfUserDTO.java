@@ -12,6 +12,6 @@ import java.util.List;
 @Builder
 @ToString(exclude = "doList")
 public class DoListOfUserDTO { //유저가 참가한 커뮤니티 리스트를 반환하는 DTO
-    private final User user;
-    private final List<Do> doList;
+    private final Long userId;
+    private final List<DoResponseDTO> doResponseDTOList;
 }

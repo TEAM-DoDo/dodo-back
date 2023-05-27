@@ -18,11 +18,11 @@ public class DoOfUser {
     @Column(name = "isHostTrue")
     private Boolean isHostTrue; //개설자 여부
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "do_id")
     private Do myDo;
 

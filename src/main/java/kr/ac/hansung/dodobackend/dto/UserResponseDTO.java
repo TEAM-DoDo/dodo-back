@@ -12,5 +12,4 @@ import java.util.List;
 @Builder
 public class UserResponseDTO { //유저 조회 결과를 반환하는 DTO
     private final User user;
-    private final List<Do> doList = new ArrayList<>();
 }
