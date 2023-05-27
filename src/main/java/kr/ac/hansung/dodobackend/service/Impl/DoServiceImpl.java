@@ -5,14 +5,28 @@ import kr.ac.hansung.dodobackend.dto.PostDTO;
 import kr.ac.hansung.dodobackend.entity.Do;
 import kr.ac.hansung.dodobackend.entity.Notice;
 import kr.ac.hansung.dodobackend.entity.Post;
+import kr.ac.hansung.dodobackend.entity.Schedule;
+import kr.ac.hansung.dodobackend.exception.FileNotFoundException;
+import kr.ac.hansung.dodobackend.exception.ScheduleNotFoundException;
+import kr.ac.hansung.dodobackend.exception.UserNotFoundException;
 import kr.ac.hansung.dodobackend.repository.DoRepository;
 import kr.ac.hansung.dodobackend.repository.NoticeRepository;
 import kr.ac.hansung.dodobackend.repository.PostRepository;
+import kr.ac.hansung.dodobackend.repository.ScheduleRepository;
 import kr.ac.hansung.dodobackend.service.DoService;
+import kr.ac.hansung.dodobackend.service.ImageService;
 import lombok.RequiredArgsConstructor;
+import org.json.HTTP;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -22,7 +36,68 @@ public class DoServiceImpl implements DoService {
     private final PostRepository postRepository;
     private final ImageServiceImpl imageServiceImpl;
     private final NoticeRepository noticeRepository;
+    private final ScheduleRepository scheduleRepository;
+    private final ImageService imageService;
     private static int imageNumber = 0;
+
+    @Override
+    public List<Long> getAllCommunityId()
+    {
+        List<Long> idList = doRepository.getAllCommunityId();
+        return idList;
+    }
+
+    @Override
+    public void createNewDo(Map<String,Object> result) {
+        //받아온 데이터를 새로운 커뮤니티로 생성
+        String name = result.get("doName").toString();
+        String place = result.get("place").toString();
+        String description = result.get("description").toString();
+        Do doInfo = Do.builder().name(name).description(description).place(place).bannerImagepath("").build();
+        doRepository.save(doInfo);
+    }
+
+    @Override
+    public Do getDo(int doId) {
+        Do data = doRepository.findById((long) doId).orElse(null);
+        if (data == null){
+            String errorMessage = "Received unknown do id.";
+            throw UserNotFoundException.builder().code(HttpStatus.BAD_REQUEST.value()).message(errorMessage).build();
+        }
+        return data;
+    }
+
+    @Override
+    public Schedule getDoSchedule(Long doId)
+    {
+       Schedule schedule = scheduleRepository.findFirstByMyDo_IdOrderByStartTime(doId);
+        if (schedule == null){
+            String errorMessage = "Received unknown do id.";
+            throw ScheduleNotFoundException.builder().code(HttpStatus.BAD_REQUEST.value()).message(errorMessage).build();
+        }
+
+       return schedule;
+    }
+
+    @Override
+    public String uploadTitleImage(int doId, List<MultipartFile> files)
+    {
+        String path = imageService.putFile("/title/",files.get(0),Integer.toString(doId));
+        return path;
+    }
+
+    @Override
+    public File getTitleImage(int doId)
+    {
+        File file = imageService.getFile("/title/",Integer.toString(doId)+ ".jpeg");
+        if(file.exists() == false)
+        {
+            String errorMessage = "Title image File을 찾을 수 없습니다.";
+            throw FileNotFoundException.builder().code(HttpStatus.NOT_FOUND.value()).message(errorMessage).build();
+        }
+        return file;
+    }
+
 
     @Override
     public List<Post> GetPostsByDoId(Long doId)
