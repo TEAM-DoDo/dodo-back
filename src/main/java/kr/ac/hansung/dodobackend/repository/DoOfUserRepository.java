@@ -15,6 +15,6 @@ import java.util.List;
 @Transactional
 public interface DoOfUserRepository extends JpaRepository<DoOfUser, Long> {
     List<DoOfUser> findByUser(User user); //유저가 속한 DO 찾을때 사용
-    @Query("select distinct dou.user from DoOfUser dou where dou.id = :doId")
+    @Query("select distinct dou.user from DoOfUser dou where dou.myDo.id = :doId")
     List<User> findUserListInDoByDoId(@Param("doId") Long doId);
 }

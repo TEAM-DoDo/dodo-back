@@ -1,5 +1,6 @@
 package kr.ac.hansung.dodobackend.service.Impl;
 
+import kr.ac.hansung.dodobackend.dto.DoEnterDTO;
 import kr.ac.hansung.dodobackend.dto.NoticeDTO;
 import kr.ac.hansung.dodobackend.dto.PostDTO;
 import kr.ac.hansung.dodobackend.entity.Do;
@@ -13,6 +14,7 @@ import kr.ac.hansung.dodobackend.repository.DoRepository;
 import kr.ac.hansung.dodobackend.repository.NoticeRepository;
 import kr.ac.hansung.dodobackend.repository.PostRepository;
 import kr.ac.hansung.dodobackend.repository.ScheduleRepository;
+import kr.ac.hansung.dodobackend.service.DoOfUserService;
 import kr.ac.hansung.dodobackend.service.DoService;
 import kr.ac.hansung.dodobackend.service.ImageService;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,7 @@ public class DoServiceImpl implements DoService {
     private final NoticeRepository noticeRepository;
     private final ScheduleRepository scheduleRepository;
     private final ImageService imageService;
+    private final DoOfUserService doOfUserService;
     private static int imageNumber = 0;
 
     @Override
@@ -54,9 +57,15 @@ public class DoServiceImpl implements DoService {
         String place = result.get("place").toString();
         String description = result.get("description").toString();
         Do doInfo = Do.builder().name(name).description(description).place(place).bannerImagepath("").build();
-        doRepository.save(doInfo);
-    }
+        Do createdDo = doRepository.save(doInfo);
 
+        String userId = result.get("userId").toString();
+        DoEnterDTO doEnterDTO = new DoEnterDTO();
+        doEnterDTO.setDoId(createdDo.getId());
+        doEnterDTO.setUserId(Long.valueOf(userId));
+        doEnterDTO.setHostTrue(true);
+        doOfUserService.CreateDoOfUser(doEnterDTO);
+    }
     @Override
     public Do getDo(int doId) {
         Do data = doRepository.findById((long) doId).orElse(null);
