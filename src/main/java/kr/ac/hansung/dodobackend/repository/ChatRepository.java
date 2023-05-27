@@ -11,5 +11,6 @@ import java.util.List;
 @Repository
 @Transactional
 public interface ChatRepository extends JpaRepository<Chat, Long> {
+    public List<Chat> findChatsByDoId(long doId);
     List<Chat> findByMyDo(Do findedDo);
 }

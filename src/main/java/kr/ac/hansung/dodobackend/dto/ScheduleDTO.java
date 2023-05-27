@@ -16,14 +16,11 @@ public class ScheduleDTO {
     private Long doId; //소속된 do id
     @NotBlank(message = "title is blank")
     private String title; //제목
-    @NotBlank(message = "date is blank")
-    private String date; //날짜
     @NotBlank(message = "startTime is blank")
     private String startTime; //시작시간
     @NotBlank(message = "endTime is blank")
     private String endTime; //종료시간
     @NotBlank(message = "place is blank")
     private String place; //장소
-    @NotBlank(message = "detail is blank")
     private String detail; //상세정보
 }

@@ -2,20 +2,17 @@ package kr.ac.hansung.dodobackend.controller;
 
 import jakarta.validation.Valid;
 import kr.ac.hansung.dodobackend.dto.ScheduleDTO;
-import kr.ac.hansung.dodobackend.service.Impl.ScheduleServiceImpl;
+import kr.ac.hansung.dodobackend.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/schedules")
+@RequestMapping("/api/schedules")
 @RequiredArgsConstructor
 public class ScheduleController {
-    private final ScheduleServiceImpl scheduleServiceImpl;
+    private final ScheduleService scheduleService;
 
     @PostMapping
     public ResponseEntity<String> CreateSchedule(@Valid @RequestBody ScheduleDTO scheduleDTO) //스케쥴 전용 dto..
@@ -24,7 +21,7 @@ public class ScheduleController {
         System.out.println("클라이언트가 전송한 일정 개설 정보 : " + scheduleDTO);
 
         //서비스 레이어에 전달
-        scheduleServiceImpl.CreateSchedule(scheduleDTO);
+        scheduleService.CreateSchedule(scheduleDTO);
 
         return new ResponseEntity<>("새로운 일정 생성 성공", HttpStatus.CREATED);
     }

@@ -22,7 +22,6 @@ public class ScheduleServiceImpl implements ScheduleService {
     public void CreateSchedule(ScheduleDTO scheduleDTO)
     {
         String title = scheduleDTO.getTitle();
-        String date = scheduleDTO.getDate();
         String startTime = scheduleDTO.getStartTime();
         String endTime = scheduleDTO.getEndTime();
         String place = scheduleDTO.getPlace();
@@ -33,7 +32,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         Optional<Do> currentDo = doRepository.findById(doId);
 
         //저장
-        Schedule schedule = Schedule.builder().date(date).title(title).startTime(startTime).endTime(endTime)
+        Schedule schedule = Schedule.builder().title(title).startTime(startTime).endTime(endTime)
                 .place(place).detail(detail).myDo(currentDo.get()).build();
         scheduleRepository.save(schedule);
     }
@@ -47,5 +46,13 @@ public class ScheduleServiceImpl implements ScheduleService {
         //반환
         return schedules;
     }
+//    public Schedule getRecentSchedule(long doId){
+//        Optional<Schedule> schedule = scheduleRepository.getRecentScheduleFromDoId(doId);
+//        if (schedule.isPresent()){
+//            //에러
+//            return null;
+//        }
+//        return schedule.get();
+//    }
 
 }

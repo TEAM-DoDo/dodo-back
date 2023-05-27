@@ -12,31 +12,27 @@ public class Chat {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id; //기본키
-
-    @Column(name = "nickname")
-    private String nickname; //작성자
+    @Column(name = "user_id")
+    private Long userId; //작성자
+    @Column(name = "do")
+    private Long doId;//작성한 장소
     @Column(name = "time")
-    private String reportingDate; //작성일
-    @Column(name = "content")
+    private String date; //작성일
+    @Column(name = "content",length = 512)
     private String content; //내용
-    @Column(name="profileImagePath")
-    private String profileImagePath; //작성자의 프로필 이미지 경로
 
+    
     //소속된 커뮤니티의 기본키를 외래키로 가짐
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "do_id")
     private Do myDo;
 
     @Builder
-    private Chat(String nickname, String reportingDate, String content, String profileImagePath)
+    private Chat(long userId,long doId, String date, String content)
     {
-        this.nickname = nickname;
-        this.reportingDate = reportingDate;
+        this.userId = userId;
+        this.doId = doId;
+        this.date = date;
         this.content = content;
-        this.profileImagePath = profileImagePath;
-    }
-
-    public void setTime(int time) {
-        this.reportingDate = Integer.toString(time);
     }
 }
