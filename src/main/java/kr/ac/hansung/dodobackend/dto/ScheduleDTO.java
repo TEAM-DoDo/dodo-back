@@ -22,5 +22,8 @@ public class ScheduleDTO {
     private String endTime; //종료시간
     @NotBlank(message = "place is blank")
     private String place; //장소
+    @NotBlank(message = "cost is blank")
+    private String cost;
     private String detail; //상세정보
+
 }

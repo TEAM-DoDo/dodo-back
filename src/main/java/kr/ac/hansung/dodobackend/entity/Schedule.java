@@ -26,6 +26,8 @@ public class Schedule {
     private String place; //장소
     @Column(name = "detail")
     private String detail; //상세정보
+    @Column(name = "cost")
+    private String cost;
 
     //이 일정이 소속된 커뮤니티의 기본키를 외래키로 받음
     @ManyToOne(fetch = FetchType.EAGER)
@@ -34,7 +36,7 @@ public class Schedule {
 
     @Builder
     public Schedule(String title, String date, String startTime, String endTime,
-                    String place, String detail, Do myDo)
+                    String place, String detail,String cost, Do myDo)
     {
         this.title = title;
         this.date = date;
@@ -43,5 +45,6 @@ public class Schedule {
         this.place = place;
         this.detail = detail;
         this.myDo = myDo;
+        this.cost = cost;
     }
 }
