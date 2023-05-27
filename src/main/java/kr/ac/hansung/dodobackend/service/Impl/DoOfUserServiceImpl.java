@@ -11,6 +11,8 @@ import kr.ac.hansung.dodobackend.service.DoOfUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -34,6 +36,19 @@ public class DoOfUserServiceImpl implements DoOfUserService {
         DoOfUser newDoOfUser = DoOfUser.builder().user(user.get()).myDo(Do.get())
                 .isHostTrue(false).isLikeTrue(false).build();
         doOfUserRepository.save(newDoOfUser);
+    }
+
+    @Override
+    public List<User> getUserListOfDo(Long doId)
+    {
+        Optional<Do> findedDo = doRepository.findById(doId);
+        List<DoOfUser> DoOfUserList = doOfUserRepository.findByMyDo(findedDo.get());
+        List<User> userList = new ArrayList<>();
+        for(DoOfUser doOfUser : DoOfUserList)
+        {
+            userList.add(doOfUser.getUser());
+        }
+        return userList;
     }
 
 }

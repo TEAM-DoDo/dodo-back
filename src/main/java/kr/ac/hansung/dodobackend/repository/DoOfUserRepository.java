@@ -1,5 +1,6 @@
 package kr.ac.hansung.dodobackend.repository;
 
+import kr.ac.hansung.dodobackend.entity.Do;
 import kr.ac.hansung.dodobackend.entity.DoOfUser;
 import kr.ac.hansung.dodobackend.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,5 +12,6 @@ import java.util.List;
 @Repository
 @Transactional
 public interface DoOfUserRepository extends JpaRepository<DoOfUser, Long> {
-    List<DoOfUser> findByUser(User user);
+    List<DoOfUser> findByUser(User user); //유저가 속한 DO 찾을때 사용
+    List<DoOfUser> findByMyDo(Do myDo);
 }
