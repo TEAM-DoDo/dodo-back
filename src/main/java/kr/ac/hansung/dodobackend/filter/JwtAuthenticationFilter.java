@@ -16,8 +16,8 @@ import java.io.IOException;
 @WebFilter(
         urlPatterns = {
                 //"/api/user/*",
-                "/api/image/*",
-                "/api/do/*",
+//                "/api/image/*",
+//                "/api/do/*",
                 //"/api/chat/*"
         }
 )

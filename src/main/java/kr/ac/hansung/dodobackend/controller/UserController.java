@@ -151,7 +151,7 @@ public class UserController {
     //없을 경우 return은 HttpStatus.BAD_REQUEST이 경우 프론트에서 회원가입으로 넘어감
     //만약 유저가 없다면 회원가입으로 넘어가는 처리 필요
     //테스트용 코드로 변경
-    @GetMapping("/check")
+    @PostMapping("/check")
     public ResponseEntity<?> checkUser(){
         var token = jwtTokenProvider.createToken();
         System.out.println(token.getAccessToken());

@@ -5,11 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import kr.ac.hansung.dodobackend.dto.NoticeDTO;
 import kr.ac.hansung.dodobackend.dto.PostDTO;
+import kr.ac.hansung.dodobackend.dto.ScheduleDTO;
 import kr.ac.hansung.dodobackend.entity.*;
 import kr.ac.hansung.dodobackend.repository.DoRepository;
 import kr.ac.hansung.dodobackend.repository.ScheduleRepository;
 import kr.ac.hansung.dodobackend.service.DoServiceImpl;
 import kr.ac.hansung.dodobackend.service.ImageService;
+import kr.ac.hansung.dodobackend.service.ScheduleServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -33,11 +35,11 @@ import java.util.Optional;
 @RequestMapping("/api/do")
 @RequiredArgsConstructor
 public class DoController {
-    private Map<Integer, Do> doDummy = new HashMap<>();
     private final ImageService imageService;
     private final DoRepository doRepository;
     private final ScheduleRepository scheduleRepository;
     private final DoServiceImpl doService;
+    private final ScheduleServiceImpl scheduleService;
     @GetMapping("/list")
     public ResponseEntity<Map<String,Object>> getDoIDList(){
         Map<String,Object> result = new HashMap<>();
@@ -76,31 +78,22 @@ public class DoController {
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
     //가장 최근의 스케줄을 사용자에게 전송해주는 코드
-    @GetMapping("/{do_id}/schedule")
-    public ResponseEntity<List<Schedule>> getDoSchedule(@PathVariable("do_id") Long doId){
-        Optional<Do> findedDo = doRepository.findById(doId);
-        if (findedDo.isPresent() == false){
+    @GetMapping("/{do_id}/schedules")
+    public ResponseEntity<?> getDoSchedule(@PathVariable("do_id") Long doId){
+        Schedule result = scheduleRepository.findFirstByMyDo_IdOrderByStartTime(doId);
+        if (result == null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
-        var schedules = scheduleRepository.findByMyDo(findedDo.get());
-        System.out.println(schedules);
-        if (schedules.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-        return new ResponseEntity<>(schedules,HttpStatus.OK);
+        return new ResponseEntity<>(result,HttpStatus.OK);
     }
-    @PostMapping("/{do_id}/schedule/create")
-    public ResponseEntity<?> createDoSchedule(@PathVariable("do_id") int doId,@Validated @RequestBody String json) {
-        Map<String, Object> result;
-        try {
-            result = new ObjectMapper().readValue(json, HashMap.class);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PostMapping("/{do_id}/schedules")
+    public ResponseEntity<String> createSchedule(@Valid @RequestBody ScheduleDTO scheduleDTO) //스케쥴 전용 dto..
+    {
+        //출력
+        System.out.println("클라이언트가 전송한 일정 개설 정보 : " + scheduleDTO);
+        //서비스 레이어에 전달
+        scheduleService.CreateSchedule(scheduleDTO);
+        return new ResponseEntity<>("새로운 일정 생성 성공", HttpStatus.CREATED);
     }
     @PostMapping("/{do_id}/title-image")
     public ResponseEntity<Resource> uploadTitleImage(@PathVariable("do_id") int doId, List<MultipartFile> files){
@@ -133,16 +126,6 @@ public class DoController {
     //공지사항을 추가하는 코드
     @PostMapping("/{do_id}/notice")
     public ResponseEntity<?> postNewNotice(@PathVariable("do_id") int doId, @Validated @RequestBody Notice notice){
-        //어드민인지 확인하는 코드
-        boolean isAdmin = true;
-        if (!isAdmin){
-            return new ResponseEntity<>("{\"message\" : \"Permissions not allowed.\"}",HttpStatus.BAD_REQUEST);
-        }
-        Do data = doDummy.get(doId);
-        if (data == null){
-            return new ResponseEntity<>("{\"message\" : \"Do for this id does not exist.\"}",HttpStatus.BAD_REQUEST);
-        }
-
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
