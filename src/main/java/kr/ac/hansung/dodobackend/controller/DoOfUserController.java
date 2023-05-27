@@ -18,10 +18,8 @@ public class DoOfUserController {
     {
         //DTO 출력
         System.out.println("클라이언트의 아이디와 입장한 Do 아이디 : " + doEnterDTO.getUserId() + ", " + doEnterDTO.getDoId());
-
         //서비스 레이어에게 DTO전달
         doOfUserServiceImpl.CreateDoOfUser(doEnterDTO);
-
         //반환
         return new ResponseEntity<>("조회 성공", HttpStatus.CREATED);
     }

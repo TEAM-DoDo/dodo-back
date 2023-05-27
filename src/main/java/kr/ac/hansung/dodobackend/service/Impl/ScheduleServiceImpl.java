@@ -26,6 +26,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         String endTime = scheduleDTO.getEndTime();
         String place = scheduleDTO.getPlace();
         String detail = scheduleDTO.getDetail();
+        String cost = scheduleDTO.getCost();
         Long doId = scheduleDTO.getDoId();
 
         //조회
@@ -33,7 +34,7 @@ public class ScheduleServiceImpl implements ScheduleService {
 
         //저장
         Schedule schedule = Schedule.builder().title(title).startTime(startTime).endTime(endTime)
-                .place(place).detail(detail).myDo(currentDo.get()).build();
+                .place(place).detail(detail).cost(cost).myDo(currentDo.get()).build();
         scheduleRepository.save(schedule);
     }
 
