@@ -22,6 +22,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashMap;
@@ -34,21 +35,22 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class DoController {
     private Map<Integer, Do> doDummy = new HashMap<>();
-    private final ImageService imageService;
-    private final DoRepository doRepository;
-    private final ScheduleRepository scheduleRepository;
     private final DoService doService;
     private final ScheduleService scheduleService;
 
     @GetMapping("/list")
-    public ResponseEntity<Map<String,Object>> getDoIDList(){
+    public ResponseEntity<Map<String,Object>> getDoIDList()
+    {
         Map<String,Object> result = new HashMap<>();
+        List<Long> communityIdList = doService.getAllCommunityId();
         //현재는 받아온 키셋을 넘겨 보내도록 하고 있음 향후 쿼리로 변경하여 바로 리스트를 받아와 전송하도록 하면 됨
-        result.put("do_id", doRepository.getAllCommunityId());
+        result.put("do_id", communityIdList);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
     @PostMapping("/create")
-    public ResponseEntity<?> createDO(@Validated @RequestBody String json){
+    public ResponseEntity<?> createDO(@Valid @RequestBody String json)
+    {
         Map<String,Object> result;
         try{
             result = new ObjectMapper().readValue(json, HashMap.class);
@@ -56,36 +58,30 @@ public class DoController {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        //받아온 데이터를 새로운 커뮤니티로 생성
-        String name = result.get("doName").toString();
-        String place = result.get("place").toString();
-        String description = result.get("description").toString();
-        Do doInfo = Do.builder().name(name).description(description).place(place).bannerImagepath("").build();
-        doRepository.save(doInfo);
+
+        doService.createNewDo(result);
 
 //        doInfo.setImage(result.get("image").toString());
         //현재는 더미에 데이터를 저장하도록 되어있음
 //        doDummy.put(doDummy.size(),doInfo);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
     @GetMapping("/{do_id}")
-    public ResponseEntity<Do> getDo(@PathVariable("do_id") int doId){
-        Do data = doRepository.findById((long) doId).orElse(null);
-        if (data == null){
-            System.out.println("Received unknown do id.");
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<Do> getDo(@PathVariable("do_id") int doId)
+    {
+        Do data = doService.getDo(doId);
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
+
     //가장 최근의 스케줄을 사용자에게 전송해주는 코드
     @GetMapping("/{do_id}/schedules")
-    public ResponseEntity<?> getDoSchedule(@PathVariable("do_id") Long doId){
-        Schedule result = scheduleRepository.findFirstByMyDo_IdOrderByStartTime(doId);
-        if (result == null){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> getDoSchedule(@PathVariable("do_id") Long doId)
+    {
+        Schedule result = doService.getDoSchedule(doId);
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
+
     @PostMapping("/{do_id}/schedules")
     public ResponseEntity<String> createSchedule(@Valid @RequestBody ScheduleDTO scheduleDTO) //스케쥴 전용 dto..
     {
@@ -95,23 +91,24 @@ public class DoController {
         scheduleService.CreateSchedule(scheduleDTO);
         return new ResponseEntity<>("새로운 일정 생성 성공", HttpStatus.CREATED);
     }
+
     @PostMapping("/{do_id}/title-image")
-    public ResponseEntity<Resource> uploadTitleImage(@PathVariable("do_id") int doId, List<MultipartFile> files){
+    public ResponseEntity<Resource> uploadTitleImage(@PathVariable("do_id") int doId, List<MultipartFile> files)
+    {
         if (files.isEmpty()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        if(imageService.putFile("/title/",files.get(0),Integer.toString(doId)) == null){
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-        }
+        doService.uploadTitleImage(doId, files);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
     //타이틀 이미지 사진
     @GetMapping("/{do_id}/title-image")
-    public ResponseEntity<Resource> uploadTitleImage(@PathVariable("do_id") int doId){
+    public ResponseEntity<Resource> uploadTitleImage(@PathVariable("do_id") int doId) {
         System.out.println("Request do title image : " + doId);
-        var file = imageService.getFile("/title/",Integer.toString(doId)+ ".jpeg");
-        if (file == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        File file = doService.getTitleImage(doId);
         FileSystemResource result = new FileSystemResource(file);
+
         HttpHeaders header = new HttpHeaders();
         try {
             header.add("Content-Type", Files.probeContentType(file.toPath()));
@@ -121,14 +118,8 @@ public class DoController {
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
         //이미지를 가져오는 알고리즘 작성
-        return new ResponseEntity<>(result,header,HttpStatus.OK);
+        return new ResponseEntity<>(result, header, HttpStatus.OK);
     }
-    //공지사항을 추가하는 코드
-    @PostMapping("/{do_id}/notice")
-    public ResponseEntity<?> postNewNotice(@PathVariable("do_id") int doId, @Validated @RequestBody Notice notice){
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-
 
     @GetMapping("/{do_id}/posts")
     public List<Post> GetPostsByDoId(@PathVariable("do_id") Long id)

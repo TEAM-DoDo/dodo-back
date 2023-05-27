@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 @Transactional
 public interface DoRepository extends JpaRepository<Do, Long> {
-    @Query("select id from Do")
+    @Query("select d.id from Do d")
     List<Long> getAllCommunityId();
 }
