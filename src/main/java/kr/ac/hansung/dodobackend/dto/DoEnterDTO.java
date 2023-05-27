@@ -3,9 +3,10 @@ package kr.ac.hansung.dodobackend.dto;
 import lombok.*;
 
 @Getter
+@Setter
 @ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DoEnterDTO {
     private Long userId;
     private Long doId;
+    private boolean isHostTrue;
 }

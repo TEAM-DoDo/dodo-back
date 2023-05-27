@@ -79,6 +79,9 @@ public class DoController {
     public ResponseEntity<?> getDoSchedule(@PathVariable("do_id") Long doId)
     {
         Schedule result = doService.getDoSchedule(doId);
+        if (result == null){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(result,HttpStatus.OK);
     }
 

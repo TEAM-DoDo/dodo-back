@@ -32,7 +32,7 @@ public class DoOfUserServiceImpl implements DoOfUserService {
 
         //저장
         DoOfUser newDoOfUser = DoOfUser.builder().user(user.get()).myDo(Do.get())
-                .isHostTrue(false).isLikeTrue(false).build();
+                .isHostTrue(doEnterDTO.isHostTrue()).isLikeTrue(false).build();
         doOfUserRepository.save(newDoOfUser);
     }
 
