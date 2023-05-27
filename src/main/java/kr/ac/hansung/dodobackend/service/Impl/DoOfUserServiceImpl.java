@@ -1,4 +1,4 @@
-package kr.ac.hansung.dodobackend.service;
+package kr.ac.hansung.dodobackend.service.Impl;
 
 import kr.ac.hansung.dodobackend.dto.DoEnterDTO;
 import kr.ac.hansung.dodobackend.entity.Do;
@@ -7,6 +7,7 @@ import kr.ac.hansung.dodobackend.entity.User;
 import kr.ac.hansung.dodobackend.repository.DoOfUserRepository;
 import kr.ac.hansung.dodobackend.repository.DoRepository;
 import kr.ac.hansung.dodobackend.repository.UserRepository;
+import kr.ac.hansung.dodobackend.service.DoOfUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,8 @@ public class DoOfUserServiceImpl implements DoOfUserService {
     private final UserRepository userRepository;
     private final DoRepository doRepository;
     private final DoOfUserRepository doOfUserRepository;
+
+    @Override
     public void CreateDoOfUser(DoEnterDTO doEnterDTO)
     {
         Long userId = doEnterDTO.getUserId();

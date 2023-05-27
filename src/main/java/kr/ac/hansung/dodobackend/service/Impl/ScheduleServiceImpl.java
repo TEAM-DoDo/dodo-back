@@ -1,10 +1,11 @@
-package kr.ac.hansung.dodobackend.service;
+package kr.ac.hansung.dodobackend.service.Impl;
 
 import kr.ac.hansung.dodobackend.dto.ScheduleDTO;
 import kr.ac.hansung.dodobackend.entity.Do;
 import kr.ac.hansung.dodobackend.entity.Schedule;
 import kr.ac.hansung.dodobackend.repository.DoRepository;
 import kr.ac.hansung.dodobackend.repository.ScheduleRepository;
+import kr.ac.hansung.dodobackend.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +14,11 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class ScheduleServiceImpl implements ScheduleService{
+public class ScheduleServiceImpl implements ScheduleService {
     private final ScheduleRepository scheduleRepository;
     private final DoRepository doRepository;
 
+    @Override
     public void CreateSchedule(ScheduleDTO scheduleDTO)
     {
         String title = scheduleDTO.getTitle();
@@ -36,6 +38,7 @@ public class ScheduleServiceImpl implements ScheduleService{
         scheduleRepository.save(schedule);
     }
 
+    @Override
     public List<Schedule> GetSchedulesByDoId(Do findedDo)
     {
         //조회

@@ -1,4 +1,4 @@
-package kr.ac.hansung.dodobackend.service;
+package kr.ac.hansung.dodobackend.service.Impl;
 
 import kr.ac.hansung.dodobackend.dto.ScheduleEnterDTO;
 import kr.ac.hansung.dodobackend.entity.Schedule;
@@ -7,6 +7,7 @@ import kr.ac.hansung.dodobackend.entity.User;
 import kr.ac.hansung.dodobackend.repository.ScheduleOfUserRepository;
 import kr.ac.hansung.dodobackend.repository.ScheduleRepository;
 import kr.ac.hansung.dodobackend.repository.UserRepository;
+import kr.ac.hansung.dodobackend.service.ScheduleOfUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +15,12 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class ScheduleOfUserServiceImpl {
+public class ScheduleOfUserServiceImpl implements ScheduleOfUserService {
     private final ScheduleOfUserRepository scheduleOfUserRepository;
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
 
+    @Override
     public void CreateScheduleOfUser(ScheduleEnterDTO scheduleEnterDTO)
     {
         Long userId = scheduleEnterDTO.getUserId();

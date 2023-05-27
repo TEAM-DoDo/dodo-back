@@ -2,7 +2,7 @@ package kr.ac.hansung.dodobackend.controller;
 
 import jakarta.validation.Valid;
 import kr.ac.hansung.dodobackend.dto.DoEnterDTO;
-import kr.ac.hansung.dodobackend.service.DoOfUserServiceImpl;
+import kr.ac.hansung.dodobackend.service.Impl.DoOfUserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package kr.ac.hansung.dodobackend.service;
+package kr.ac.hansung.dodobackend.service.Impl;
 
 import kr.ac.hansung.dodobackend.dto.*;
 import kr.ac.hansung.dodobackend.entity.*;
@@ -6,6 +6,7 @@ import kr.ac.hansung.dodobackend.exception.UserNotFoundException;
 import kr.ac.hansung.dodobackend.repository.DoOfUserRepository;
 import kr.ac.hansung.dodobackend.repository.ScheduleOfUserRepository;
 import kr.ac.hansung.dodobackend.repository.UserRepository;
+import kr.ac.hansung.dodobackend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,9 +18,9 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor //생성자 주입
-public class UserServiceImpl implements UserService{ //유저 서비스 레이어
+public class UserServiceImpl implements UserService { //유저 서비스 레이어
     private final UserRepository userRepository; //생성자 주입
-    private final ImageService imageService; //생성자 주입
+    private final ImageServiceImpl imageServiceImpl; //생성자 주입
     private final DoOfUserRepository doOfUserRepository; //생성자 주입
     private final ScheduleOfUserRepository scheduleOfUserRepository; //생성자 주입
     @Override
@@ -126,7 +127,7 @@ public class UserServiceImpl implements UserService{ //유저 서비스 레이�
         String id = profileImageDTO.getId().toString();
         List<MultipartFile> files = profileImageDTO.getFiles();
         String imageSaveFolderName = "/users/";
-        String savedProfileImagePath = imageService.putFile(imageSaveFolderName, files.get(0), id);
+        String savedProfileImagePath = imageServiceImpl.putFile(imageSaveFolderName, files.get(0), id);
 
         //유저 프로필이미지 경로 업데이트
         User currentUser = user.get();

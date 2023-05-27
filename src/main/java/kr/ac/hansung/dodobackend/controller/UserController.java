@@ -3,9 +3,9 @@ package kr.ac.hansung.dodobackend.controller;
 import jakarta.validation.Valid;
 import kr.ac.hansung.dodobackend.dto.*;
 import kr.ac.hansung.dodobackend.jwt.JwtTokenProvider;
-import kr.ac.hansung.dodobackend.service.AuthService;
-import kr.ac.hansung.dodobackend.service.ImageService;
-import kr.ac.hansung.dodobackend.service.UserServiceImpl;
+import kr.ac.hansung.dodobackend.service.Impl.AuthServiceImpl;
+import kr.ac.hansung.dodobackend.service.Impl.ImageServiceImpl;
+import kr.ac.hansung.dodobackend.service.Impl.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +20,14 @@ public class UserController {
     //의존성 주입. 생성자가 하나이므로 @Autowired 생략가능
     private final JwtTokenProvider jwtTokenProvider; //생성자 주입
     private final UserServiceImpl userServiceImpl; //생성자 주입
-    private final ImageService imageService; //생성자 주입
-    private final AuthService authService;
+    private final ImageServiceImpl imageServiceImpl; //생성자 주입
+    private final AuthServiceImpl authServiceImpl;
     //인증번호 전송
     @GetMapping("/send-verification")
     public ResponseEntity<?> sendVerificationCode(@RequestBody HashMap<String, Object> param){
         var phoneNum = param.get("phoneNumber").toString();
         System.out.println(phoneNum);
-        authService.sendVerification(phoneNum);
+        authServiceImpl.sendVerification(phoneNum);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/check-verification")
@@ -35,7 +35,7 @@ public class UserController {
         var phoneNum = param.get("phoneNumber").toString();
         var certNumber = param.get("certNumber").toString();
         //System.out.println(certNumber);
-        if (!authService.checkVerification(phoneNum,certNumber)){
+        if (!authServiceImpl.checkVerification(phoneNum,certNumber)){
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
         return new ResponseEntity<>(HttpStatus.OK);

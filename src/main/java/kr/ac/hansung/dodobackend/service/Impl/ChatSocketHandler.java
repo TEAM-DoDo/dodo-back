@@ -1,4 +1,4 @@
-package kr.ac.hansung.dodobackend.service;
+package kr.ac.hansung.dodobackend.service.Impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.ac.hansung.dodobackend.entity.Chat;

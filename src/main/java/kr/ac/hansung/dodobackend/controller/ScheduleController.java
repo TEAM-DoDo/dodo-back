@@ -2,7 +2,7 @@ package kr.ac.hansung.dodobackend.controller;
 
 import jakarta.validation.Valid;
 import kr.ac.hansung.dodobackend.dto.ScheduleDTO;
-import kr.ac.hansung.dodobackend.service.ScheduleServiceImpl;
+import kr.ac.hansung.dodobackend.service.Impl.ScheduleServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

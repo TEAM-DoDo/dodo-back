@@ -8,10 +8,9 @@ import kr.ac.hansung.dodobackend.dto.PostDTO;
 import kr.ac.hansung.dodobackend.entity.*;
 import kr.ac.hansung.dodobackend.repository.DoRepository;
 import kr.ac.hansung.dodobackend.repository.ScheduleRepository;
-import kr.ac.hansung.dodobackend.service.DoServiceImpl;
-import kr.ac.hansung.dodobackend.service.ImageService;
+import kr.ac.hansung.dodobackend.service.Impl.DoServiceImpl;
+import kr.ac.hansung.dodobackend.service.Impl.ImageServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -21,7 +20,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashMap;
@@ -34,7 +32,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class DoController {
     private Map<Integer, Do> doDummy = new HashMap<>();
-    private final ImageService imageService;
+    private final ImageServiceImpl imageServiceImpl;
     private final DoRepository doRepository;
     private final ScheduleRepository scheduleRepository;
     private final DoServiceImpl doService;
@@ -107,7 +105,7 @@ public class DoController {
         if (files.isEmpty()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        if(imageService.putFile("/title/",files.get(0),Integer.toString(doId)) == null){
+        if(imageServiceImpl.putFile("/title/",files.get(0),Integer.toString(doId)) == null){
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
         return new ResponseEntity<>(HttpStatus.OK);
@@ -116,7 +114,7 @@ public class DoController {
     @GetMapping("/{do_id}/title-image")
     public ResponseEntity<Resource> uploadTitleImage(@PathVariable("do_id") int doId){
         System.out.println("Request do title image : " + doId);
-        var file = imageService.getFile("/title/",Integer.toString(doId)+ ".jpeg");
+        var file = imageServiceImpl.getFile("/title/",Integer.toString(doId)+ ".jpeg");
         if (file == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         FileSystemResource result = new FileSystemResource(file);
         HttpHeaders header = new HttpHeaders();
