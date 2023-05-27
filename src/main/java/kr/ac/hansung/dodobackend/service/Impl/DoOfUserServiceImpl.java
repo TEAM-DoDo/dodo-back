@@ -41,13 +41,7 @@ public class DoOfUserServiceImpl implements DoOfUserService {
     @Override
     public List<User> getUserListOfDo(Long doId)
     {
-        Optional<Do> findedDo = doRepository.findById(doId);
-        List<DoOfUser> DoOfUserList = doOfUserRepository.findByMyDo(findedDo.get());
-        List<User> userList = new ArrayList<>();
-        for(DoOfUser doOfUser : DoOfUserList)
-        {
-            userList.add(doOfUser.getUser());
-        }
+        List<User> userList = doOfUserRepository.findUserListInDoByDoId(doId);
         return userList;
     }
 
