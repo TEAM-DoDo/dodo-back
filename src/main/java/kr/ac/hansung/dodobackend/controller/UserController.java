@@ -12,11 +12,19 @@ import kr.ac.hansung.dodobackend.service.ImageService;
 import kr.ac.hansung.dodobackend.repository.UserRepository;
 import kr.ac.hansung.dodobackend.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController //Rest api를 위한 어노테이션. @Controller + @ResponseBody
@@ -59,11 +67,15 @@ public class UserController {
             loginDTO.setTokenInfo(jwtTokenProvider.createToken());
             return new ResponseEntity<LoginDTO>(loginDTO,HttpStatus.CREATED);
         }
-        loginDTO.setUserdata(userInfo == null ? null : userInfo.getUser());
+        loginDTO.setUserdata(userInfo.getUser());
         loginDTO.setTokenInfo(jwtTokenProvider.createToken());
         return new ResponseEntity<LoginDTO>(loginDTO,HttpStatus.OK);
     }
-
+    @PostMapping("/{user_id}/modify")
+    public ResponseEntity<SignUpResponseDTO> modifyUserInfo(@PathVariable("user_id") long userId,@Valid @RequestBody  SignUpDTO signUpDTO){
+        SignUpResponseDTO result = userService.modifyUserData(userId,signUpDTO);
+        return new ResponseEntity<SignUpResponseDTO>(result,HttpStatus.OK);
+    }
     //아이디로 유저 조회
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDTO> GetUserByNickname(@PathVariable("id") Long id) {
@@ -123,7 +135,36 @@ public class UserController {
         //반환
         return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
     }
-
+    //프로필 이미지 업데이트
+    @PostMapping("/{user_id}/profile-image")
+    public ResponseEntity<?> UploadProfileImage(@PathVariable("user_id") long userId, List<MultipartFile> files)
+    {
+        if (files.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        ProfileImageDTO profileImageDTO = new ProfileImageDTO();
+        profileImageDTO.setFiles(files);
+        profileImageDTO.setId(userId);
+        userService.changeProfileImage(profileImageDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    //프로필 이미지 불러오기
+    @GetMapping("/{user_id}/profile-image")
+    public ResponseEntity<Resource> DownloadProfileImage(@PathVariable("user_id") long userid)
+    {
+        var file = userService.getProfileImageByUserId(userid);
+        FileSystemResource result = new FileSystemResource(file);
+        HttpHeaders header = new HttpHeaders();
+        try {
+            header.add("Content-Type", Files.probeContentType(file.toPath()));
+        } catch (IOException e) {
+            System.out.println("Can't add header");
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+        //이미지를 가져오는 알고리즘 작성
+        return new ResponseEntity<>(result, header, HttpStatus.OK);
+    }
     //사용자 has 모임
     @GetMapping("/doList")
     public ResponseEntity<DoListOfUserDTO> GetMyDoList(@RequestParam("id") Long id) {

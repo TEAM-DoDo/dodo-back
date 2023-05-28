@@ -2,6 +2,8 @@ package kr.ac.hansung.dodobackend.service;
 
 import kr.ac.hansung.dodobackend.dto.*;
 
+import java.io.File;
+
 public interface UserService {
     UserResponseDTO GetUserById(Long id); //아이디로 유저 조회
     UserResponseDTO GetUserByNickname(String nickname); //닉네임으로 유저 조회
@@ -11,4 +13,6 @@ public interface UserService {
     UserResponseDTO changeProfileImage(ProfileImageDTO profileImageDTO); //프로필 이미지 업데이트
     DoListOfUserDTO GetDoListOfUserById(Long id); //유저가 참가한 커뮤니티 리스트 조회
     ScheduleListOfUserDTO GetScheduleListOfUserById(Long id); //유저가 참가한 일정 리스트 조회
+    SignUpResponseDTO modifyUserData(long id,SignUpDTO signUpDTO);//유저 정보를 갱신하는 함수
+    File getProfileImageByUserId(long userId);// 유저의 프로필 이미지를 받아오는 함수
 }

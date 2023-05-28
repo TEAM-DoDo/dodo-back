@@ -27,10 +27,10 @@ public class ImageServiceImpl implements ImageService {
 
         //향후 데이터 베이스와 저장된 이미지를 연동하는 코드가 필요함
         String storeName = file.getOriginalFilename();
-        if (name != null){
-            String[] names = storeName.split("\\.");
-            storeName = name + "." + names[1];
-        }
+//        if (name != null){
+//            String[] names = storeName.split("\\.");
+//            storeName = name + "." + names[1];
+//        }
         Path path = Paths.get(folderPath+ "/" +storeName).toAbsolutePath();
         try{
             //System.out.println(path);

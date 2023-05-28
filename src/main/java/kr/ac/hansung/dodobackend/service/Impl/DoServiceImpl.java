@@ -105,7 +105,7 @@ public class DoServiceImpl implements DoService {
     {
         String imageSavedFolderName = "/" + doId + "/banners/";
         String imagePath = doRepository.findById(Long.valueOf(doId)).get().getBannerImagepath();
-        imagePath = imagePath.contains(".jpeg") ? imagePath :  imagePath + ".jpeg";
+        //imagePath = imagePath.contains(".jpeg") ? imagePath :  imagePath + ".jpeg";
         File file = imageService.getFile(imageSavedFolderName, imagePath);
         if(file.exists() == false)
         {

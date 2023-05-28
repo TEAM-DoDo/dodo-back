@@ -40,8 +40,9 @@ public class User{
 
     @Builder //id를 제외한 나머지 필드들을 매개변수로 받는 빌더패턴에 사용될 생성자
     private User(String phoneNumber, String nickname, String dateOfBirth,
-                 String address, String gender, String category, int level, String profileImagePath)
+                 String address, String gender, String category, int level, String profileImagePath,long id)
     {
+        this.id = id;
         this.phoneNumber = phoneNumber;
         this.nickname = nickname;
         this.dateOfBirth = dateOfBirth;
@@ -51,5 +52,4 @@ public class User{
         this.level = level;
         this.profileImagePath = profileImagePath;
     }
-
 }
