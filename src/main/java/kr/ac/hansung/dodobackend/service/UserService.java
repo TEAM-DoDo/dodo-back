@@ -13,5 +13,6 @@ public interface UserService {
     UserResponseDTO changeProfileImage(ProfileImageDTO profileImageDTO); //프로필 이미지 업데이트
     DoListOfUserDTO GetDoListOfUserById(Long id); //유저가 참가한 커뮤니티 리스트 조회
     ScheduleListOfUserDTO GetScheduleListOfUserById(Long id); //유저가 참가한 일정 리스트 조회
-    File GetProfileImage(Long userId);
+    SignUpResponseDTO modifyUserData(long id,SignUpDTO signUpDTO);//유저 정보를 갱신하는 함수
+    File getProfileImageByUserId(long userId);// 유저의 프로필 이미지를 받아오는 함수
 }

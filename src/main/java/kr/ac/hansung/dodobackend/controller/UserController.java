@@ -19,11 +19,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController //Rest api를 위한 어노테이션. @Controller + @ResponseBody
@@ -66,11 +68,15 @@ public class UserController {
             loginDTO.setTokenInfo(jwtTokenProvider.createToken());
             return new ResponseEntity<LoginDTO>(loginDTO,HttpStatus.CREATED);
         }
-        loginDTO.setUserdata(userInfo == null ? null : userInfo.getUser());
+        loginDTO.setUserdata(userInfo.getUser());
         loginDTO.setTokenInfo(jwtTokenProvider.createToken());
         return new ResponseEntity<LoginDTO>(loginDTO,HttpStatus.OK);
     }
-
+    @PostMapping("/{user_id}/modify")
+    public ResponseEntity<SignUpResponseDTO> modifyUserInfo(@PathVariable("user_id") long userId,@Valid @RequestBody  SignUpDTO signUpDTO){
+        SignUpResponseDTO result = userService.modifyUserData(userId,signUpDTO);
+        return new ResponseEntity<SignUpResponseDTO>(result,HttpStatus.OK);
+    }
     //아이디로 유저 조회
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDTO> GetUserByNickname(@PathVariable("id") Long id) {
@@ -119,37 +125,34 @@ public class UserController {
     }
 
     //프로필 이미지 업데이트
-    @PutMapping
-    public ResponseEntity<UserResponseDTO> ChangeProfileImage(@Valid @RequestBody ProfileImageDTO profileImageDTO) {
-        //DTO 출력
-        System.out.println("클라이언트로부터 받은 유저 아이디와 프로필 이미지 정보 : " + profileImageDTO);
-
-        //서비스 레이어에게 DTO전달
-        UserResponseDTO userResponseDTO = userService.changeProfileImage(profileImageDTO);
-
-        //반환
-        return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
+    @PostMapping("/{user_id}/profile-image")
+    public ResponseEntity<?> UploadProfileImage(@PathVariable("user_id") long userId, List<MultipartFile> files)
+    {
+        if (files.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        ProfileImageDTO profileImageDTO = new ProfileImageDTO();
+        profileImageDTO.setFiles(files);
+        profileImageDTO.setId(userId);
+        userService.changeProfileImage(profileImageDTO);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    //프로필 이미지 다운로드
-    @GetMapping("/{user-id}/profile-image")
-    public ResponseEntity<Resource> GetProfileImage(@PathVariable("user-id") Long userId)
+    //프로필 이미지 불러오기
+    @GetMapping("/{user_id}/profile-image")
+    public ResponseEntity<Resource> DownloadProfileImage(@PathVariable("user_id") long userid)
     {
-        System.out.println("유저 프로필 이미지 다운로드 요청 받음" + userId);
-        File file = userService.GetProfileImage(userId);
+        var file = userService.getProfileImageByUserId(userid);
         FileSystemResource result = new FileSystemResource(file);
-
         HttpHeaders header = new HttpHeaders();
-        try
-        {
+        try {
             header.add("Content-Type", Files.probeContentType(file.toPath()));
-        }
-        catch (IOException e)
-        {
-            System.out.println("can't add header");
+        } catch (IOException e) {
+            System.out.println("Can't add header");
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
         }
+        //이미지를 가져오는 알고리즘 작성
         return new ResponseEntity<>(result, header, HttpStatus.OK);
     }
 
