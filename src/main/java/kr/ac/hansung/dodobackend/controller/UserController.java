@@ -79,7 +79,7 @@ public class UserController {
     }
     //아이디로 유저 조회
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> GetUserByNickname(@PathVariable("id") Long id) {
+    public ResponseEntity<UserResponseDTO> GetUserById(@PathVariable("id") Long id) {
         //조회
         UserResponseDTO userResponseDTO = userService.GetUserById(id);
 
