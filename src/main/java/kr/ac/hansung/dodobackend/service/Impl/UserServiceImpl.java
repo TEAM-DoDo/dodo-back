@@ -137,7 +137,7 @@ public class UserServiceImpl implements UserService { //유저 서비스 레이�
 
         //이미지 저장
         List<MultipartFile> files = profileImageDTO.getFiles();
-        String imageSaveFolderName = "users/";
+        String imageSaveFolderName = "/users/";
         String savedProfileImagePath = imageServiceImpl.putFile(imageSaveFolderName, files.get(0), files.get(0).getOriginalFilename());
 
         //유저 프로필이미지 경로 업데이트
@@ -158,10 +158,12 @@ public class UserServiceImpl implements UserService { //유저 서비스 레이�
             throw UserNotFoundException.builder().code(HttpStatus.NOT_FOUND.value()).message(errorMessage).build();
             //throw 시 메서드의 실행이 중지되어, 아래 코드는 실행되지 않음
         }
-        String imageSavedFolderName = "users/" + userId + "/";
+        String imageSavedFolderName = "/users/" + userId + "/";
         String imagePath = user.get().getProfileImagePath();
+        System.out.println(imagePath);
         //imagePath = imagePath.contains(".jpeg") ? imagePath :  imagePath + ".jpeg";
         File file = imageServiceImpl.getFile(imageSavedFolderName, imagePath);
+        System.out.println("getProfileImage에서 호출 : " + file.getAbsolutePath());
         if(file.exists() == false)
         {
             String errorMessage = "Title image File을 찾을 수 없습니다.";

@@ -88,13 +88,16 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public File getFile(String id, String fileName)
     {
+
         var path = imagePath+ id;
         if (!checkPath(path)){
             return null;//저장공간이 생성되지 않음
         }
         Path folderPath = CreatePath(path);
         if (folderPath==null) return null;
+        System.out.println(folderPath + "/" + fileName);
         var file = new File(folderPath+"/"+fileName);
+        System.out.println("getFile에서 호출 : " + file.getAbsolutePath());
         if (!file.exists()){
             System.out.println("File not exist[path : " + file.getAbsolutePath() + "]");
             return null;
