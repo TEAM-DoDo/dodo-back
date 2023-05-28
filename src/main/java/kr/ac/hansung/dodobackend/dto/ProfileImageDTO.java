@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProfileImageDTO {
     @NotBlank(message = "id is blank")
-    private Long id;
+    private Long userId;
     @NotNull(message = "image file data is null")
     private List<MultipartFile> files;
 }

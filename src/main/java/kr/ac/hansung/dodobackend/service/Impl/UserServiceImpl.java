@@ -2,6 +2,7 @@ package kr.ac.hansung.dodobackend.service.Impl;
 
 import kr.ac.hansung.dodobackend.dto.*;
 import kr.ac.hansung.dodobackend.entity.*;
+import kr.ac.hansung.dodobackend.exception.FileNotFoundException;
 import kr.ac.hansung.dodobackend.exception.UserNotFoundException;
 import kr.ac.hansung.dodobackend.repository.DoOfUserRepository;
 import kr.ac.hansung.dodobackend.repository.ScheduleOfUserRepository;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -114,7 +116,7 @@ public class UserServiceImpl implements UserService { //유저 서비스 레이�
     @Override
     public UserResponseDTO changeProfileImage(ProfileImageDTO profileImageDTO) {
         //유저 조회
-        Optional<User> user = userRepository.findById(profileImageDTO.getId());
+        Optional<User> user = userRepository.findById(profileImageDTO.getUserId());
         if(user.isPresent() == false)
         {
             System.out.println("isPresent()로 예외 처리 감지");
@@ -124,10 +126,10 @@ public class UserServiceImpl implements UserService { //유저 서비스 레이�
         }
 
         //이미지 저장
-        String id = profileImageDTO.getId().toString();
+        String id = profileImageDTO.getUserId().toString();
         List<MultipartFile> files = profileImageDTO.getFiles();
-        String imageSaveFolderName = "/users/";
-        String savedProfileImagePath = imageServiceImpl.putFile(imageSaveFolderName, files.get(0), id);
+        String imageSaveFolderName = "/users/" + id + "/";
+        String savedProfileImagePath = imageServiceImpl.putFile(imageSaveFolderName, files.get(0), files.get(0).getOriginalFilename());
 
         //유저 프로필이미지 경로 업데이트
         User currentUser = user.get();
@@ -137,6 +139,20 @@ public class UserServiceImpl implements UserService { //유저 서비스 레이�
         //반환
         UserResponseDTO userResponseDTO = UserResponseDTO.builder().user(currentUser).build();
         return userResponseDTO;
+    }
+
+    @Override
+    public File GetProfileImage(Long userId)
+    {
+        String imageSavedFolderName = "/users/" + userId + "/";
+        String imagePath = userRepository.findById(userId).get().getProfileImagePath();
+        File file = imageServiceImpl.getFile(imageSavedFolderName, imagePath);
+        if(file.exists() == false)
+        {
+            String errorMessage = "profile image file을 찾을 수 없습니다.";
+            throw FileNotFoundException.builder().code(HttpStatus.NOT_FOUND.value()).message(errorMessage).build();
+        }
+        return file;
     }
 
     @Override

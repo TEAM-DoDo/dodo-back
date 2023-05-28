@@ -12,10 +12,17 @@ import kr.ac.hansung.dodobackend.service.ImageService;
 import kr.ac.hansung.dodobackend.repository.UserRepository;
 import kr.ac.hansung.dodobackend.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.json.HTTP;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -122,6 +129,28 @@ public class UserController {
 
         //반환
         return new ResponseEntity<>(userResponseDTO, HttpStatus.OK);
+    }
+
+    //프로필 이미지 다운로드
+    @GetMapping("/{user-id}/profile-image")
+    public ResponseEntity<Resource> GetProfileImage(@PathVariable("user-id") Long userId)
+    {
+        System.out.println("유저 프로필 이미지 다운로드 요청 받음" + userId);
+        File file = userService.GetProfileImage(userId);
+        FileSystemResource result = new FileSystemResource(file);
+
+        HttpHeaders header = new HttpHeaders();
+        try
+        {
+            header.add("Content-Type", Files.probeContentType(file.toPath()));
+        }
+        catch (IOException e)
+        {
+            System.out.println("can't add header");
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+        return new ResponseEntity<>(result, header, HttpStatus.OK);
     }
 
     //사용자 has 모임
