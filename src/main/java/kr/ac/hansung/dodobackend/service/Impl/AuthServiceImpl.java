@@ -19,13 +19,7 @@ public class AuthServiceImpl implements AuthService {
         this.sid = sid;
         this.authToken = authToken;
         Twilio.init(sid, authToken);
-        ResourceSet<Service> services = Service.reader().limit(20).read();
-        for(Service record : services) {
-            if (record.getSid().equals(serviceId)){
-                service = record;
-                return;
-            }
-        }
+        service = Service.creator("Phone Verify Service").create();
     }
 
     @Override

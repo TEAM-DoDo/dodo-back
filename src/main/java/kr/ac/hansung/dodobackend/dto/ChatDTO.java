@@ -10,6 +10,7 @@ import lombok.*;
 public class ChatDTO {
     private long id;
     private long userId; //작성자
+    private long username;
     private String date;
     private String content; //내용
 }
