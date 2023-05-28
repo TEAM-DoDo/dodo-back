@@ -9,6 +9,8 @@ import kr.ac.hansung.dodobackend.service.AuthService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.Base64;
+
 @Component
 public class AuthServiceImpl implements AuthService {
     private final String authToken;
@@ -16,10 +18,18 @@ public class AuthServiceImpl implements AuthService {
     private Service service;
 
     public AuthServiceImpl(@Value("${twilio.account_sid}") String sid, @Value("${twilio.auth_token}") String authToken, @Value("${twilio.service_id}") String serviceId) {
+        byte[] decodedBytes = Base64.getDecoder().decode(authToken);
+        String decodedString = new String(decodedBytes);
         this.sid = sid;
-        this.authToken = authToken;
-        Twilio.init(sid, authToken);
-        service = Service.creator("Phone Verify Service").create();
+        this.authToken = decodedString;
+        Twilio.init(this.sid, this.authToken);
+        ResourceSet<Service> services = Service.reader().limit(20).read();
+        for(Service record : services) {
+            if (record.getSid().equals(serviceId)){
+                service = record;
+                return;
+            }
+        }
     }
 
     @Override
