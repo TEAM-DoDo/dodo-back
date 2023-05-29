@@ -11,6 +11,7 @@ import kr.ac.hansung.dodobackend.service.ScheduleOfUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -34,6 +35,10 @@ public class ScheduleOfUserServiceImpl implements ScheduleOfUserService {
         ScheduleOfUser newScheduleOfUser = ScheduleOfUser.builder().user(user.get()).schedule(schedule.get()).build();
         scheduleOfUserRepository.save(newScheduleOfUser);
     }
-
+    @Override
+    public List<User> getUserOfSchedule(long scheduleId){
+        var result = scheduleOfUserRepository.findUserListInScheduleByScheduleId(scheduleId);
+        return result;
+    }
 
 }
