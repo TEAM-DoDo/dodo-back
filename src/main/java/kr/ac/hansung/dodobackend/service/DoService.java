@@ -19,11 +19,11 @@ public interface DoService {
     Do createNewDo(Map<String,Object> result);
     Do getDo(int doId);
     Schedule getDoSchedule(Long doId);
-
     List<Post> GetPostsByDoId(Long doId);
     List<Notice> GetNoticeByDoId(Long doId);
     void CreatePost(Long doId, PostDTO postDTO);
     void CreateNotice(Long doId, NoticeDTO noticeDTO);
     void uploadTitleImage(int doId, List<MultipartFile> files);
     File getTitleImage(int doId);
+    List<Long> searchDoByInfo(String name, String description, String place,String category);//Do 정보를 기반으로 하여 검색하는 함수
 }

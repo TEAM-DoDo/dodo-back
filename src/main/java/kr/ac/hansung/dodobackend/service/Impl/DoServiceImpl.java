@@ -116,8 +116,6 @@ public class DoServiceImpl implements DoService {
         }
         return file;
     }
-
-
     @Override
     public List<Post> GetPostsByDoId(Long doId)
     {
@@ -161,5 +159,10 @@ public class DoServiceImpl implements DoService {
         Notice newNotice = Notice.builder().title(title).writtenBy(writtenBy).content(content)
                 .reportingDate(reportingDate).myDo(findedDo.get()).build();
         noticeRepository.save(newNotice);
+    }
+    @Override
+    public List<Long> searchDoByInfo(String name, String description, String place, String category) {
+
+        return  doRepository.getDoIdListBySearch(name,description,place);
     }
 }
