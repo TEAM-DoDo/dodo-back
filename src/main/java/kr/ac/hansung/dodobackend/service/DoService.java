@@ -16,7 +16,7 @@ import java.util.Map;
 
 public interface DoService {
     List<Long> getAllCommunityId();
-    void createNewDo(Map<String,Object> result);
+    Do createNewDo(Map<String,Object> result);
     Do getDo(int doId);
     Schedule getDoSchedule(Long doId);
     List<Post> GetPostsByDoId(Long doId);

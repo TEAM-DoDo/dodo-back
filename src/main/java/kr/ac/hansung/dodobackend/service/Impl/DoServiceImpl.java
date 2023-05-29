@@ -51,7 +51,7 @@ public class DoServiceImpl implements DoService {
     }
 
     @Override
-    public void createNewDo(Map<String,Object> result) {
+    public Do createNewDo(Map<String,Object> result) {
         //받아온 데이터를 새로운 커뮤니티로 생성
         String name = result.get("doName").toString();
         String place = result.get("place").toString();
@@ -65,6 +65,8 @@ public class DoServiceImpl implements DoService {
         doEnterDTO.setUserId(Long.valueOf(userId));
         doEnterDTO.setHostTrue(true);
         doOfUserService.CreateDoOfUser(doEnterDTO);
+
+        return createdDo;
     }
     @Override
     public Do getDo(int doId) {
