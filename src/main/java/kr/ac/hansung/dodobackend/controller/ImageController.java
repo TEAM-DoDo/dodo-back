@@ -76,6 +76,7 @@ public class ImageController {
 //            isFileUploaded = imageService.putFiles(String.valueOf(dodoId),files);
             String imageSavedFolderName = "/" + dodoId + "/posts/";
             String imagePath = imageServiceImpl.putFile(imageSavedFolderName, files.get(0), files.get(0).getOriginalFilename());
+            if(imagePath.length() > 0) isFileUploaded = true;
             Optional<Do> findedDo = doRepository.findById(dodoId);
             Post newPost = Post.builder().imagePath(imagePath).myDo(findedDo.get()).build();
             postRepository.save(newPost);
