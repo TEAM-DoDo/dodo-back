@@ -49,7 +49,7 @@ public class DoController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createDO(@Valid @RequestBody String json)
+    public ResponseEntity<Do> createDO(@Valid @RequestBody String json)
     {
         Map<String,Object> result;
         try{
@@ -59,12 +59,12 @@ public class DoController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        doService.createNewDo(result);
+        Do createdDo = doService.createNewDo(result);
 
 //        doInfo.setImage(result.get("image").toString());
         //현재는 더미에 데이터를 저장하도록 되어있음
 //        doDummy.put(doDummy.size(),doInfo);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(createdDo, HttpStatus.OK);
     }
 
     @GetMapping("/{do_id}")
