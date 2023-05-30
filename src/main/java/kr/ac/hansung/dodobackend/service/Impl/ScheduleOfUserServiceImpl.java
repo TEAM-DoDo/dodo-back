@@ -41,4 +41,10 @@ public class ScheduleOfUserServiceImpl implements ScheduleOfUserService {
         return result;
     }
 
+    @Override
+    public List<Schedule> getScheduleByUserId(long userId) {
+        List<Schedule> result = scheduleOfUserRepository.findScheduleListByUserId(userId);
+        return result;
+    }
+
 }
