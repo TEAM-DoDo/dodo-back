@@ -1,6 +1,8 @@
 package kr.ac.hansung.dodobackend.service.Impl;
 
+import jakarta.servlet.ServletContext;
 import kr.ac.hansung.dodobackend.service.ImageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,7 +16,9 @@ import java.util.*;
 
 @Service
 public class ImageServiceImpl implements ImageService {
-    private final String imagePath = "/images/";
+    private final String imagePath = "/resources/images/";
+    @Autowired
+    ServletContext context;
 
     @Override
     public String putFile(String storePath,MultipartFile file,String name)
@@ -126,13 +130,7 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public boolean checkPath(String path)
     {
-        Path source;
-        try {
-            source = Paths.get(this.getClass().getResource("/").toURI());
-        } catch (URISyntaxException e) {
-            e.printStackTrace();//
-            return false;
-        }
+        Path source = Paths.get(context.getRealPath("/"));
         Path dirPath = Paths.get(source.toAbsolutePath()+path);
         //System.out.println(dirPath.toAbsolutePath());
         return Files.exists(dirPath);
@@ -140,13 +138,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public Path CreatePath(String path){
-        Path source;
-        try {
-            source = Paths.get(this.getClass().getResource("/").toURI());
-        } catch (URISyntaxException e) {
-            e.printStackTrace();//
-            return null;
-        }
+        Path source = Paths.get(context.getRealPath("/"));
         Path dirPath = Paths.get(source.toAbsolutePath()+path);
         if (Files.exists(dirPath)){
             return dirPath;
