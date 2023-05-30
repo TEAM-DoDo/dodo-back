@@ -40,7 +40,7 @@ public class UserController {
     private final UserRepository userRepository;
 
     //인증번호 전송
-    @PostMapping("/send-verification")
+    @PostMapping("/send-verification")//토큰 불필요
     public ResponseEntity<?> sendVerificationCode(@RequestBody HashMap<String, Object> param){
         var phoneNum = param.get("phoneNumber").toString();
         System.out.println(phoneNum);
@@ -48,7 +48,7 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/check-verification")
+    @PostMapping("/check-verification")//토큰 불필요
     public ResponseEntity<LoginDTO> checkVerificationCode(@RequestBody HashMap<String, Object> param){
         var phoneNum = param.get("phoneNumber").toString();
         var certNumber = param.get("certNumber").toString();
@@ -72,13 +72,13 @@ public class UserController {
         loginDTO.setTokenInfo(jwtTokenProvider.createToken());
         return new ResponseEntity<LoginDTO>(loginDTO,HttpStatus.OK);
     }
-    @PostMapping("/{user_id}/modify")
+    @PostMapping("/{user_id}/modify")//토큰 필요
     public ResponseEntity<SignUpResponseDTO> modifyUserInfo(@PathVariable("user_id") long userId,@Valid @RequestBody  SignUpDTO signUpDTO){
         SignUpResponseDTO result = userService.modifyUserData(userId,signUpDTO);
         return new ResponseEntity<SignUpResponseDTO>(result,HttpStatus.OK);
     }
     //아이디로 유저 조회
-    @GetMapping("/{id}")
+    @GetMapping("/{id}")//토큰 필요
     public ResponseEntity<UserResponseDTO> GetUserById(@PathVariable("id") Long id) {
         //조회
         UserResponseDTO userResponseDTO = userService.GetUserById(id);
@@ -88,7 +88,7 @@ public class UserController {
     }
 
     //닉네임으로 유저 조회
-    @GetMapping("/nickname")
+    @GetMapping("/nickname")//토큰 필요
     public ResponseEntity<UserResponseDTO> GetUserByNickname(@RequestParam("nickname") String nickname) {
         //조회
         UserResponseDTO userResponseDTO = userService.GetUserByNickname(nickname);
@@ -98,7 +98,7 @@ public class UserController {
     }
 
     //유저 신규 생성
-    @PostMapping
+    @PostMapping//토큰 필요
     public ResponseEntity<SignUpResponseDTO> SignUp(@Valid @RequestBody SignUpDTO signUpDTO) //클라이언트가 날린 정보가 SignUpDTO 인스턴스로 검증 후 매핑됨
     {
         //DTO 출력
@@ -112,7 +112,7 @@ public class UserController {
     }
 
     //로그인
-    @GetMapping
+    @GetMapping//토큰 필요
     public ResponseEntity<UserResponseDTO> SignIn(@Valid @RequestBody SignInDTO signInDTO) {
         //DTO 출력
         System.out.println("클라이언트로부터 받은 로그인 정보 : " + signInDTO);
@@ -125,7 +125,7 @@ public class UserController {
     }
 
     //프로필 이미지 업데이트
-    @PostMapping("/{user_id}/profile-image")
+    @PostMapping("/{user_id}/profile-image")//토큰 필요
     public ResponseEntity<?> UploadProfileImage(@PathVariable("user_id") long userId, List<MultipartFile> files)
     {
         if (files.isEmpty()){
@@ -139,7 +139,7 @@ public class UserController {
     }
 
     //프로필 이미지 불러오기
-    @GetMapping("/{user_id}/profile-image")
+    @GetMapping("/{user_id}/profile-image")//토큰 필요
     public ResponseEntity<Resource> DownloadProfileImage(@PathVariable("user_id") long userid)
     {
         var file = userService.getProfileImageByUserId(userid);
@@ -157,7 +157,7 @@ public class UserController {
     }
 
     //사용자 has 모임
-    @GetMapping("/doList")
+    @GetMapping("/doList")//토큰 불필요
     public ResponseEntity<DoListOfUserDTO> GetMyDoList(@RequestParam("id") Long id) {
         //조회
         DoListOfUserDTO doListOfUserDTO = userService.GetDoListOfUserById(id);
@@ -167,7 +167,7 @@ public class UserController {
     }
 
     //사용자 has 일정
-    @GetMapping("/scheduleList")
+    @GetMapping("/scheduleList")//토큰 불필요
     public ResponseEntity<ScheduleListOfUserDTO> GetMyScheduleList(@RequestParam("id") Long id) {
         //조회
         ScheduleListOfUserDTO scheduleListOfUserDTO = userService.GetScheduleListOfUserById(id);
@@ -175,18 +175,4 @@ public class UserController {
         //반환
         return new ResponseEntity<>(scheduleListOfUserDTO, HttpStatus.OK);
     }
-
-    //Check user 함수가 필요, 만약 check user에서 유저 존재 여부를 확인하면 jwt 토큰을 전송해줘야함
-    //로그인 성공시 return은 HttpStatus.OK 및 JWT 토큰 이 경우 바로 홈화면으로 넘어감
-    //없을 경우 return은 HttpStatus.BAD_REQUEST이 경우 프론트에서 회원가입으로 넘어감
-    //만약 유저가 없다면 회원가입으로 넘어가는 처리 필요
-    //테스트용 코드로 변경
-    @PostMapping("/check")
-    public ResponseEntity<?> checkUser(){
-        var token = jwtTokenProvider.createToken();
-        System.out.println(token.getAccessToken());
-        System.out.println(token.getRefreshToken());
-        return new ResponseEntity<>(token,HttpStatus.OK);
-    }
-    //이후 유저의 호출을 받아서 회원가입 진행
 }

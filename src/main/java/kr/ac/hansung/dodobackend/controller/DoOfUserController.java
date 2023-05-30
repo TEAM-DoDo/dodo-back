@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/do-of-user")
+@RequestMapping("/api/do-of-user")//토큰 필요
 @RequiredArgsConstructor
 public class DoOfUserController {
     private final DoOfUserService doOfUserService;

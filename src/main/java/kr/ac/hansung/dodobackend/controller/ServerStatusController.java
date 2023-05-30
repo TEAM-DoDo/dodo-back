@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/status")
+@RequestMapping("/api/status")//토큰 불필요
 public class ServerStatusController {
     //서버가 켜져있는지 알려주는 RestApi
     @GetMapping

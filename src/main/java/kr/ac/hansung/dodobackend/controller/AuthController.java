@@ -31,9 +31,9 @@ public class AuthController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         if (jwtTokenProvider.validateToken(accessToken)||jwtTokenProvider.validateToken(refreshToken)){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(jwtTokenProvider.createToken(), HttpStatus.OK);
         }
-        return new ResponseEntity<>(jwtTokenProvider.createToken(), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 }
 

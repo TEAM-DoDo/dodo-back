@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/search")
+@RequestMapping("/api/search")//토큰 필요
 @RequiredArgsConstructor
 public class SearchController {
     private final DoService doService;

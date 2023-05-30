@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/schedule-of-user")
+@RequestMapping("/api/schedule-of-user")//토큰 필요
 public class ScheduleOfUserController {
     private final ScheduleOfUserServiceImpl scheduleOfUserServiceImpl;
 

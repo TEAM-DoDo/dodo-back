@@ -18,7 +18,11 @@ import java.io.IOException;
 //                //"/api/user/*",
 //                "/api/image/*",
 //                "/api/do/*",
-//                //"/api/chat/*"
+//                "/api/search/*",
+//                "/api/schedule-of-user/*",
+//                "/api/do-of-user/*",
+//                "/api/chat/*",
+//                "/api/schedules",
 //        }
 //)
 ////@Component
