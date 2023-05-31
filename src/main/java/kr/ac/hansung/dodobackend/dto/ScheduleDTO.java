@@ -3,14 +3,12 @@ package kr.ac.hansung.dodobackend.dto;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
+@Setter
 @ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+//@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ScheduleDTO {
     @NotNull(message = "do id is nul")
     private Long doId; //소속된 do id
@@ -25,5 +23,4 @@ public class ScheduleDTO {
     @NotBlank(message = "cost is blank")
     private String cost;
     private String detail; //상세정보
-
 }
