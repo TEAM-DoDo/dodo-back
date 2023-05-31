@@ -14,6 +14,6 @@ import java.util.List;
 public interface DoRepository extends JpaRepository<Do, Long> {
     @Query("select d.id from Do d")
     List<Long> getAllCommunityId();
-    @Query("select d.id from Do d where d.name like %:searchName% and d.description like %:searchDes% and d.place like %:searchPlace%")
+    @Query("select d.id from Do d where REPLACE(d.name,' ','') like %:searchName% and REPLACE(d.description,' ','') like %:searchDes% and REPLACE(d.place,' ','') like %:searchPlace%")
     List<Long> getDoIdListBySearch(@Param("searchName") String searchName,@Param("searchDes") String searchDes,@Param("searchPlace")String searchPlace);
 }

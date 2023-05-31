@@ -1,5 +1,6 @@
 package kr.ac.hansung.dodobackend.controller;
 
+import kr.ac.hansung.dodobackend.service.Impl.DummyDataInputService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/api/status")//토큰 불필요
 public class ServerStatusController {
+    private final DummyDataInputService dummyDataInputService;
     //서버가 켜져있는지 알려주는 RestApi
     @GetMapping
     public ResponseEntity<?> getServerStatus(){
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    @GetMapping("/test")
+    public ResponseEntity<?> getServerStatusTest(){
+        dummyDataInputService.createDummy();
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
