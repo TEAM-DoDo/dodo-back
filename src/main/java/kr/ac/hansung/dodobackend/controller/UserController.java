@@ -157,7 +157,7 @@ public class UserController {
     }
 
     //사용자 has 모임
-    @GetMapping("/doList")//토큰 불필요
+    @GetMapping("/doList")//토큰 필요
     public ResponseEntity<DoListOfUserDTO> GetMyDoList(@RequestParam("id") Long id) {
         //조회
         DoListOfUserDTO doListOfUserDTO = userService.GetDoListOfUserById(id);
@@ -167,7 +167,7 @@ public class UserController {
     }
 
     //사용자 has 일정
-    @GetMapping("/scheduleList")//토큰 불필요
+    @GetMapping("/scheduleList")//토큰 필요
     public ResponseEntity<ScheduleListOfUserDTO> GetMyScheduleList(@RequestParam("id") Long id) {
         //조회
         ScheduleListOfUserDTO scheduleListOfUserDTO = userService.GetScheduleListOfUserById(id);
