@@ -26,8 +26,8 @@ public class DummyDataInputService {
         //첫번째 생성 친구
         User user201 =
                 User.builder()
-                        .phoneNumber("010-1234-5678")
-                        .category("[\"book\"\\,\"people-circle]")
+                        .phoneNumber("01019279473")
+                        .category("[\"globe\",\"people-circle]")
                         .dateOfBirth("2000-01-01")
                         .gender("남").level(0)
                         .nickname("한수민")
@@ -37,7 +37,7 @@ public class DummyDataInputService {
         User user202 =
                 User.builder()
                         .phoneNumber("010-1234-5678")
-                        .category("[\"book\"\\,\"people-circle]")
+                        .category("[\"book\",\"game-controller\"]")
                         .dateOfBirth("2002-01-01")
                         .gender("여").level(0)
                         .nickname("홍화영")
@@ -47,7 +47,7 @@ public class DummyDataInputService {
         User user203 =
                 User.builder()
                         .phoneNumber("010-2684-6248")
-                        .category("[\"book\"\\,\"people-circle]")
+                        .category("[\"globe\",\"game-controller\"]")
                         .dateOfBirth("1998-02-01")
                         .gender("남").level(0)
                         .nickname("김군용")
@@ -58,7 +58,7 @@ public class DummyDataInputService {
         User user204 =
                 User.builder()
                         .phoneNumber("010-5876-3412")
-                        .category("[\"book\"\\,\"people-circle]")
+                        .category("[\"globe\",\"game-controller\"]")
                         .dateOfBirth("1998-02-01")
                         .gender("남").level(0)
                         .nickname("김군용")
@@ -69,7 +69,7 @@ public class DummyDataInputService {
         User user205 =
                 User.builder()
                         .phoneNumber("010-1324-4326")
-                        .category("[\"book\"\\,\"people-circle]")
+                        .category("[\"globe\",\"game-controller\"]")
                         .dateOfBirth("1998-02-01")
                         .gender("남").level(0)
                         .nickname("김군용")
@@ -80,12 +80,63 @@ public class DummyDataInputService {
         User user206 =
                 User.builder()
                         .phoneNumber("010-5313-1465")
-                        .category("[\"book\"\\,\"people-circle]")
+                        .category("[\"globe\",\"game-controller\"]")
                         .dateOfBirth("2002-03-06")
                         .gender("남").level(0)
                         .nickname("하진수")
                         .address("서울시 용산구 아이파크").build();
         userRepository.save(user206);
+
+        //친구 더미 생성
+        User user207 =
+                User.builder()
+                        .phoneNumber("01027489341")
+                        .category("[\"globe\",\"game-controller\" ,\"Korea\",\"Korea\",\"Student\"]")
+                        .dateOfBirth("1999-07-27")
+                        .gender("남").level(0)
+                        .nickname("심수민")
+                        .address("성남시 분당구 판교로").build();
+        userRepository.save(user207);
+
+        User user208 =
+                User.builder()
+                        .phoneNumber("01023847384")
+                        .category("[\"globe\",\"game-controller\" ,\"Korea\",\"Badminton\",\"Student\"]")
+                        .dateOfBirth("1987-03-24")
+                        .gender("남").level(0)
+                        .nickname("김세훈")
+                        .address("성남시 분당구 황새울로").build();
+        userRepository.save(user208);
+
+        User user209 =
+                User.builder()
+                        .phoneNumber("01023847384")
+                        .category("[\"airplane\",\"beer\" ,\"Korea\",\"Seller\",\"Flex\"]")
+                        .dateOfBirth("1999-04-25")
+                        .gender("여").level(0)
+                        .nickname("김수현")
+                        .address("성남시 분당구 백현로").build();
+        userRepository.save(user209);
+
+        User user210 =
+                User.builder()
+                        .phoneNumber("01012341234")
+                        .category("[\"beer\",\"paw\" ,\"Korea\",\"Photo\",\"Doctor\"]")
+                        .dateOfBirth("1999-03-15")
+                        .gender("남").level(0)
+                        .nickname("장예찬")
+                        .address("성남시 분당구 판교로").build();
+        userRepository.save(user210);
+
+        User user211 =
+                User.builder()
+                        .phoneNumber("01011112222")
+                        .category("[\"restaurant\",\"ㅔㅁㅈ\" ,\"Korea\",\"Doctor\",\"Dog\"]")
+                        .dateOfBirth("1987-06-08")
+                        .gender("여").level(0)
+                        .nickname("박경주")
+                        .address("성남시 분당구 판교로").build();
+        userRepository.save(user211);
 
         //Do 더미 생성
         //첫 번째 생성
