@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/status")//토큰 불필요
 public class ServerStatusController {
     private final DummyDataInputService dummyDataInputService;
+    private boolean isDummyInputted = false;
     //서버가 켜져있는지 알려주는 RestApi
     @GetMapping
     public ResponseEntity<?> getServerStatus(){
@@ -21,7 +22,10 @@ public class ServerStatusController {
     }
     @GetMapping("/test")
     public ResponseEntity<?> getServerStatusTest(){
-        dummyDataInputService.createDummy();
+        if (!isDummyInputted){
+            dummyDataInputService.createDummy();
+            isDummyInputted = true;
+        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
